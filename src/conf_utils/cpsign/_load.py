@@ -2,19 +2,22 @@
 """
 
 import numpy as np
+from typing import Union
 from sklearn.utils import Bunch
 import pandas as pd
 import re
 from sklearn.utils import check_consistent_length
 
+# FilePath definition from pandas._typing
+FilePath = Union[str, "PathLike[str]"]
 
-def load_calib_stats(f,
-                     sep=',',
-                     overall_accuracy_regex = r'^accuracy$',
-                     overall_accuracy_sd_regex = r'^accuracy_SD$',
-                     accuracy_regex = r'^accuracy\((.*?)\)$',
-                     accuracy_sd_regex = r'^accuracy\((.*?)\)_SD$'
-                     ):
+def load_calib_stats(f: FilePath,
+                     sep: str =',',
+                     overall_accuracy_regex: str = r'^accuracy$',
+                     overall_accuracy_sd_regex: str = r'^accuracy_SD$',
+                     accuracy_regex: str = r'^accuracy\((.*?)\)$',
+                     accuracy_sd_regex: str = r'^accuracy\((.*?)\)_SD$'
+                     ) -> tuple[np.ndarray,np.ndarray,np.ndarray,list[str]]:
     """
     Read a CSV formatted file with calibration statistics from CPSign
 
@@ -78,27 +81,28 @@ def load_calib_stats(f,
         check_consistent_length(sign_vals,accuracies)
         if len(sd_labels)>0:
             check_consistent_length(sign_vals, accuracies_sd, overall_sd)
-        if sd_labels is not None and sd_labels != labels:
-            raise ValueError('Inconsistent input file, different labels for accuracies and SD versions')
+            if sd_labels != labels:
+                # if they are different - something is wrong
+                raise ValueError('Inconsistent input file, different labels for accuracies and SD versions')
+            accuracies_sd = np.hstack((overall_sd.reshape(len(overall_sd),1),accuracies_sd))
             
-        accuracies = np.hstack((overall, accuracies))
-        accuracies_sd = np.hstack((overall_sd,accuracies_sd))
+        accuracies = np.hstack((overall.reshape(len(overall),1), accuracies))
         labels = ['Overall'] + labels # pre-pend the overall label
-
+        
         return sign_vals, 1 - accuracies, accuracies_sd, labels
     else:
         # Only overall accuracy given
         return sign_vals, 1-overall, overall_sd, ['Overall']
 
 
-def load_reg_efficiency_stats(f, 
+def load_reg_efficiency_stats(f: FilePath, 
                               sep: str =',',
                               skip_inf: bool = True,
-                              median_regex = r'.*median.*prediction.*interval.*width.*(?<!_sd)$',
-                              mean_regex = r'.*mean.*prediction.*interval.*width.*(?<!_sd)$',
-                              median_sd_regex = r'.*median.*prediction.*interval.*width.*_sd$',
-                              mean_sd_regex = r'.*mean.*prediction.*interval.*width.*_sd$'
-                              ):
+                              median_regex: str = r'.*median.*prediction.*interval.*width.*(?<!_sd)$',
+                              mean_regex: str = r'.*mean.*prediction.*interval.*width.*(?<!_sd)$',
+                              median_sd_regex: str = r'.*median.*prediction.*interval.*width.*_sd$',
+                              mean_sd_regex: str = r'.*mean.*prediction.*interval.*width.*_sd$'
+                              ) -> Union[np.ndarray,np.ndarray,np.ndarray,np.ndarray,np.ndarray]:
     """
     Loads efficiency statistics from a regression CP model from CPSign. 
 
@@ -115,8 +119,6 @@ def load_reg_efficiency_stats(f,
 
     Returns
     -------
-        (sign_vals, median_widths, mean_widths)
-        or
         (sign_vals, median_widths, mean_widths, median_widths_sd, mean_widths_sd)
     """
 
@@ -170,18 +172,15 @@ def load_reg_efficiency_stats(f,
             if mean_vals_sd:
                 mean_vals_sd = mean_vals_sd[finite_values_mask]
     
-    if median_vals_sd is None and mean_vals_sd is None:
-        return sign_vals, median_vals, mean_vals
-    else:
-        return sign_vals, median_vals, mean_vals, median_vals_sd, mean_vals_sd
+    return sign_vals, median_vals, mean_vals, median_vals_sd, mean_vals_sd
 
-def load_reg_predictions(f,
-    y_true_col = None,
+def load_reg_predictions(f: FilePath,
+    y_true_col: Union[str,None] = None,
     sep: str = ',',
     skip_inf: bool = True,
-    lower_regex=r'^prediction.*interval.*lower.*\d+',
-    upper_regex=r'^prediction.*interval.*upper.*\d+',
-    specifies_significance: bool = None):
+    lower_regex: str =r'^prediction.*interval.*lower.*\d+',
+    upper_regex: str =r'^prediction.*interval.*upper.*\d+',
+    specifies_significance: bool = None) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Loads a CSV file with predictions and converts to the format used by Plot_utils
 
     The required format is that the csv has;
@@ -265,10 +264,10 @@ def load_reg_predictions(f,
     return y, p, sign_vals
 
 
-def convert_regression(data,
-    y_true_index,
-    min_index,
-    max_index):
+def convert_regression(data: Union[np.ndarray,pd.DataFrame],
+    y_true_index: int,
+    min_index: int,
+    max_index: int) -> tuple[np.ndarray,np.ndarray]:
     """
     Converts a 2D input matrix to a 3D ndarray that
     is required by the metrics and plotting functions

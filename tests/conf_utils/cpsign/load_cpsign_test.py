@@ -87,6 +87,9 @@ class TestClassification():
         fig = plot.plot_label_distribution(prop_single=single, sign_vals=signs,prop_multi=multi, prop_empty=empty)
         _save_clf(fig, "TestCLF_CPSign.label_distr")
     
+    def test_load_calib_stats(self):
+        cpsign.load_calib_stats(get_resource(clf_stats_excl_sd_file), sep='\t')
+    
     def test_load_stats_eff_2(self):
         (signs,single,multi,empty) = cpsign.load_clf_efficiency_stats(get_resource(clf_stats_excl_sd_file), sep='\t')
         assert np.allclose(np.sort(signs), [0.1,0.3,0.5])
@@ -135,21 +138,25 @@ class TestRegression():
         assert mean_widths_sd is not None
         
         # check the skip_inf 
-        (sign_vals, median_widths, mean_widths) = cpsign.load_reg_efficiency_stats(get_resource(reg_stats_excl_sd_file), sep='\t', skip_inf=True)
+        (sign_vals, median_widths, mean_widths, median_widths_sd, mean_widths_sd) = cpsign.load_reg_efficiency_stats(get_resource(reg_stats_excl_sd_file), sep='\t', skip_inf=True)
         assert np.allclose(np.sort(sign_vals), [.2, 0.3])
         assert len(median_widths) == 2
         assert len(mean_widths) == 2
         # Check the values (relies on order of sign_vals)
         assert np.isclose(4.9, mean_widths[0])
         assert np.isclose(26.9, mean_widths[1])
+        assert median_widths_sd is None
+        assert mean_widths_sd is None
         
-        (sign_vals_incl, median_widths_incl, mean_widths_incl) = cpsign.load_reg_efficiency_stats(get_resource(reg_stats_excl_sd_file), sep='\t', skip_inf=False)
+        (sign_vals_incl, median_widths_incl, mean_widths_incl, median_widths_sd_incl, mean_widths_sd_incl) = cpsign.load_reg_efficiency_stats(get_resource(reg_stats_excl_sd_file), sep='\t', skip_inf=False)
         assert np.allclose(np.sort(sign_vals_incl), [0, 0.05, 0.1, 0.2, 0.3])
         assert len(median_widths_incl) == 5 and np.any(np.isposinf(median_widths_incl))
         assert len(mean_widths_incl) == 5 and np.any(np.isposinf(mean_widths_incl))
         # Check the values (relies on order of sign_vals_incl)
         assert np.isclose(4.49, median_widths_incl[0])
         assert np.isclose(27.2, median_widths_incl[1])
+        assert median_widths_sd_incl is None
+        assert mean_widths_sd_incl is None
         
         
     def test_load_cpsign_preds(self):
