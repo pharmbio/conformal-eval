@@ -8,4 +8,5 @@ test_output/
 
 # Python venv directory and contents
 venv/
+dev-env/
 

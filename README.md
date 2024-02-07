@@ -2,15 +2,15 @@
 Plotting library for conformal prediction metrics, intended to facilitate fast testing in e.g. notebooks.  
 
 ## Examples
-Example usage can be found in the [User Guide Classification notebook](python/examples/User_guide_classification.ipynb), [User Guide Regression notebook](python/examples/User_guide_regression.ipynb) and [Nonconformist+plot_utils notebook](python/examples/Nonconformist_and_plot_utils.ipynb).
+Example usage can be found in the [User Guide Classification notebook](examples/User_guide_classification.ipynb), [User Guide Regression notebook](examples/User_guide_regression.ipynb) and [Nonconformist+plot_utils notebook](examples/Nonconformist_and_plot_utils.ipynb).
 
 ## Package dependencies
-See [requirements.txt](python/requirements.txt) for package dependencies used in our development. Here are links to the libraries:
+See [requirements.txt](requirements.txt) for package dependencies, and [dev-requirements.txt] is used for our development. Here are links to the libraries:
 
 - [matplotlib](https://matplotlib.org/)
 - [Numpy](https://numpy.org/)
 - [Pandas](https://pandas.pydata.org/)
-- [Seaborn](https://seaborn.pydata.org/) - **Optionally!**
+- [Seaborn](https://seaborn.pydata.org/)
 
 ## API
 
