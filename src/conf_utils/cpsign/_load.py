@@ -1,4 +1,4 @@
-"""Utility functions for loading and converting datasets
+"""Utility functions for loading performance metrics from CPSign in CSV format
 """
 
 import numpy as np
@@ -7,9 +7,10 @@ from sklearn.utils import Bunch
 import pandas as pd
 import re
 from sklearn.utils import check_consistent_length
+from os import PathLike
 
 # FilePath definition from pandas._typing
-FilePath = Union[str, "PathLike[str]"]
+FilePath = Union[str, PathLike[str]]
 
 def load_calib_stats(f: FilePath,
                      sep: str =',',
@@ -340,8 +341,9 @@ def load_clf_efficiency_stats(f,
 
     Returns
     -------
-        (sign_vals, prop_single, prop_multi, prop_empty) or
-        (sign_vals, prop_single, prop_multi, prop_empty, prop_single_sd, prop_multi_sd, prop_empty_sd)
+    (sign_vals, prop_single, prop_multi, prop_empty, prop_single_sd, prop_multi_sd, prop_empty_sd)
+        Note: the values with suffix `_sd` may be None in case no standard deviation are included
+
     '''
     df = pd.read_csv(f, sep=sep)
     prop_s_regex = __get_regex_or_None(prop_s_regex)
@@ -389,10 +391,7 @@ def load_clf_efficiency_stats(f,
     # Convert confidence levels into significance levels     
     sign_vals = 1 - conf_vals.to_numpy() if sign_vals is None else sign_vals
 
-    if prop_single_sd is None and prop_multi_sd is None and prop_empty_sd is None:
-        return sign_vals, prop_single, prop_multi, prop_empty
-    else:
-        return sign_vals, prop_single, prop_multi, prop_empty, prop_single_sd, prop_multi_sd, prop_empty_sd
+    return sign_vals, prop_single, prop_multi, prop_empty, prop_single_sd, prop_multi_sd, prop_empty_sd
 
 
 def load_clf_predictions(f, y_true_col, sep=',', pvalue_regex=r'p-value\s+\[label=(?P<label>[^\]]+)\]'):

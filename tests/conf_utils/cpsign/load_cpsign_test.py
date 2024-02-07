@@ -77,13 +77,16 @@ class TestClassification():
         assert len(signs) == len(prop_multi_sd)
         assert len(signs) == len(prop_empty_sd)
         # Explicitly turn of reading of SD values
-        (signs2,single2,multi2,empty2) = cpsign.load_clf_efficiency_stats(get_resource(clf_stats_incl_sd_file), sep='\t', 
+        (signs2,single2,multi2,empty2,single2_sd,multi2_sd,empty2_sd) = cpsign.load_clf_efficiency_stats(get_resource(clf_stats_incl_sd_file), sep='\t', 
                                                                       prop_e_sd_regex=None, prop_m_sd_regex=None, prop_s_sd_regex=None)
         # Output should be identical for both function calls
         assert np.array_equal(signs, signs2)
         assert np.array_equal(single, single2)
         assert np.array_equal(multi, multi2)
         assert np.array_equal(empty, empty2)
+        assert single2_sd is None
+        assert multi2_sd is None
+        assert empty2_sd is None
         fig = plot.plot_label_distribution(prop_single=single, sign_vals=signs,prop_multi=multi, prop_empty=empty)
         _save_clf(fig, "TestCLF_CPSign.label_distr")
     
@@ -91,11 +94,14 @@ class TestClassification():
         cpsign.load_calib_stats(get_resource(clf_stats_excl_sd_file), sep='\t')
     
     def test_load_stats_eff_2(self):
-        (signs,single,multi,empty) = cpsign.load_clf_efficiency_stats(get_resource(clf_stats_excl_sd_file), sep='\t')
+        (signs,single,multi,empty,prop_single_sd, prop_multi_sd, prop_empty_sd) = cpsign.load_clf_efficiency_stats(get_resource(clf_stats_excl_sd_file), sep='\t')
         assert np.allclose(np.sort(signs), [0.1,0.3,0.5])
         assert len(signs) == len(single)
         assert len(signs) == len(multi)
         assert len(signs) == len(empty)
+        assert prop_single_sd is None
+        assert prop_multi_sd is None
+        assert prop_empty_sd is None
         
 
     def test_load_preds(self):
