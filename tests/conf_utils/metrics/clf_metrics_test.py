@@ -5,7 +5,7 @@ import pytest
 
 from conf_utils.metrics import (confusion_matrix,frac_errors,frac_multi_label_preds,
                                  frac_single_label_preds,n_criterion,u_criterion,
-                                 f_criteria,s_criterion,cp_credibility,cp_confidence,frac_error)
+                                 f_criteria,s_criterion,cp_credibility,cp_confidence)
 from statistics import mean 
 import time
 from ...help_utils import get_resource
@@ -172,49 +172,11 @@ class TestObservedMetrics():
         joined_overall = []
         joined_cls_wise = np.zeros((len(sign_vals),self.p_values.shape[1]))
         for i,s in enumerate(sign_vals):
-            err, cls_ = frac_error(self.true_labels, self.p_values, s)
-            joined_overall.append(err)
-            joined_cls_wise[i,:] = cls_
+            err, cls_ = frac_errors(self.true_labels, self.p_values, s)
+            joined_overall.append(err[0])
+            joined_cls_wise[i,:] = cls_[0]
         assert np.allclose(overall,np.array(joined_overall))
         assert np.allclose(joined_cls_wise, cls_wise)
-
-        # Small benchmark of the two versions, not even considering the 
-        num_iter = 0
-        tic = time.perf_counter()
-        for _ in range(num_iter):
-            for s in sign_vals:
-                _ = frac_error(self.true_labels, self.p_values, s)
-        toc = time.perf_counter()
-        if num_iter >10:
-            print(f"For loop in {toc - tic:0.4f} seconds")
-
-        tic = time.perf_counter()
-        for _ in range(num_iter):
-            _ = frac_errors(self.true_labels,self.p_values,sign_vals)
-        toc = time.perf_counter()
-        if num_iter >10:
-            print(f"All in one in {toc - tic:0.4f} seconds") 
-
-
-    def test_fraction_errors(self, set_up):
-        # Taken from the values Ulf gave for this dataset
-        sign = .25
-        overall, (e0, e1) = frac_error(self.true_labels, self.p_values, sign)
-        assert pytest.approx(0.1845) == round(overall, 4)
-        assert pytest.approx(.24) == e0
-        assert pytest.approx(.12,abs=1e-3) == e1
-
-        sign=.2
-        overall, (e0, e1) = frac_error(self.true_labels, self.p_values, sign)
-        assert pytest.approx(.1459,abs=1e-4) == overall
-        assert pytest.approx(.2) == e0
-        assert pytest.approx(0.083, abs=1e-3) == e1
-        
-        sign=.15
-        overall, (e0, e1) = frac_error(self.true_labels, self.p_values, sign)
-        assert pytest.approx(.12,abs=1e-3) == overall
-        assert pytest.approx(.16) == e0
-        assert pytest.approx(0.074, abs=1e-3) == e1
     
 
     def test_single_label_ext(self, set_up):

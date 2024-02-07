@@ -21,64 +21,10 @@ _default_significance = 0.8
 ### OBSERVED METRICS
 ######################################
 
-def frac_error(y_true, p_values, sign):
-    """**Classification** - Calculate the fraction of errors
-
-    Calculate the fraction of erroneous predictions at a given significance level `sign`
-    
-    Parameters
-    ----------
-    y_true : 1D numpy array, list or pandas Series
-        True labels
-
-    p_values : 2D numpy array or DataFrame
-        The predicted p-values, first column for the class 0, second for class 1, ..
-
-    sign : float in [0,1]
-        Significance the metric should be calculated for
-    
-    Returns
-    -------
-    frac_error : float
-        Overall fraction of errors
-
-    label_wise_fraction_error : array, shape = (n_classes,)
-        Fraction of errors for each true label, first index for class 0, ...
-    
-    See Also
-    --------
-    frac_errors : calculate error rates for a list of significance levels at the same time - much faster!
-
-    .. deprecated::
-        Use `frac_errors` instead as it uses vector functions and is roughly 30 times faster to compute
-    """
-    validate_sign(sign)
-    p_values = to_numpy2D(p_values,'p_values')
-    y_true = to_numpy1D_int(y_true, 'y_true')
-    
-    check_consistent_length(y_true, p_values)
-
-    total_errors = 0
-    # lists containing errors/counts for each class label
-    label_wise_errors = np.zeros(p_values.shape[1], dtype=float) # get an exception if not having float
-    label_wise_counts = np.zeros(p_values.shape[1], dtype=int)
-    
-    for test_ex in range(0,p_values.shape[0]):
-        ex_value = y_true[test_ex]
-        #print(ex_value)
-        if p_values[test_ex, ex_value] < sign:
-            total_errors += 1
-            label_wise_errors[ex_value] += 1
-        label_wise_counts[ex_value] += 1
-    
-    label_wise_errors = np.divide(label_wise_errors, label_wise_counts, 
-        out=np.full_like(label_wise_errors,np.nan), 
-        where=np.array(label_wise_counts)!=0)
-    
-    return float(total_errors) / y_true.shape[0], label_wise_errors
 
 def frac_errors(y_true,p_values,sign_vals):
     """**Classification:** Calculate the fraction of errors for each significance level
+    
     Parameters
     ----------
     y_true : 1D numpy array, list or pandas Series
@@ -87,8 +33,8 @@ def frac_errors(y_true,p_values,sign_vals):
     p_values : 2D numpy array or DataFrame
         The predicted p-values, first column for the class 0, second for class 1, ..
 
-    sign : float in [0,1]
-        Significance the metric should be calculated for
+    sign_vals : float in [0,1]
+        Significance levels the fraction of errors should be calculated for
     
     Returns
     -------
