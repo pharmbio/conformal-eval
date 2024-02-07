@@ -10,3 +10,7 @@ test_output/
 venv/
 dev-env/
 
+# Ignore dist and build output
+dist/
+*egg-info/
+

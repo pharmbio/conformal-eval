@@ -38,7 +38,7 @@ To simplify loading and conversions of data the `plot_utils` library now has som
 * Prediction intervals (for a given significance level)
 
 ## Set up 
-To use this package you clone this repo and add the `<base-path>/python/src/` directory to your `$PYTHONPATH`. 
+To use this package you clone this repo and add the `<base-path>/src/` directory to your `$PYTHONPATH`. 
 
 ## Developer notes
 We should aim at supplying proper docstrings, following the [numpy docstring guide](https://numpydoc.readthedocs.io/en/latest/format.html).
