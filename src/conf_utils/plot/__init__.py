@@ -1,12 +1,12 @@
 """
-The `conf_utils.plotting` module contains plotting functions
+The `conf_utils.plot` module contains plotting functions
 for conformal prediction output.
 """
 
 # all 'public' classification plotting functions
 from ._classification import *
 
-# all 'public' regression functions - TODO
+# all 'public' regression functions
 from ._regression import *
 
 # From the common stuff

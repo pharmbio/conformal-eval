@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 import matplotlib.pyplot as plt
 
-from conf_utils import metrics,plotting
+from conf_utils import metrics,plot
 from ...help_utils import _save_clf, get_resource
 
 # Some testing data - 2 class
@@ -27,35 +27,35 @@ er_pvals = er_data[:,1:]
 
 class TestPValuesPlot():
     def test_2_class(self):
-        fig = plotting.plot_pvalues(true_labels_2_class, p_values=p_vals_2_class)
+        fig = plot.plot_pvalues(true_labels_2_class, p_values=p_vals_2_class)
         fig.axes[0].set_title('p0/p1 2-class')
         _save_clf(fig,"TestPValuesPlot.test_2_class")
     
     def test_3_class_01(self):
-        fig = plotting.plot_pvalues(true_labels_3_class, p_values=p_vals_3_class,split_chart=False)
+        fig = plot.plot_pvalues(true_labels_3_class, p_values=p_vals_3_class,split_chart=False)
         fig.axes[0].set_title('p0/p1 3-class')
         _save_clf(fig,"TestPValuesPlot.test_3_class01")
     
     def test_3_class_21(self):
-        fig = plotting.plot_pvalues(true_labels_3_class, p_values=p_vals_3_class, cols=[2,1])
+        fig = plot.plot_pvalues(true_labels_3_class, p_values=p_vals_3_class, cols=[2,1])
         fig.axes[0].set_title('p2/p1 3-class')
         _save_clf(fig,"TestPValuesPlot.test_3_class21")
     
     def test_3_class_only_send21(self):
         excl_filter = true_labels_3_class == 0
 
-        fig = plotting.plot_pvalues(true_labels_3_class[~excl_filter], p_values=p_vals_3_class[~excl_filter], cols=[2,1])
+        fig = plot.plot_pvalues(true_labels_3_class[~excl_filter], p_values=p_vals_3_class[~excl_filter], cols=[2,1])
         fig.axes[0].set_title('p2/p1 3-class only single class 1 and 2')
         _save_clf(fig,"TestPValuesPlot.test_3_class21_rm0")
     
     def test_3_class_only_send_2pvals(self):
-        fig = plotting.plot_pvalues(true_labels_3_class, p_values=p_vals_3_class[:,[0,1]],cm=['r','b','k'],title='p0/p1 3-class (2-vals sent)')
+        fig = plot.plot_pvalues(true_labels_3_class, p_values=p_vals_3_class[:,[0,1]],cm=['r','b','k'],title='p0/p1 3-class (2-vals sent)')
         fig.axes[0].set_title('p0/p1 3-class (2-vals sent)')
         _save_clf(fig,"TestPValuesPlot.test_3_class_only_send_2pvals")
     
     def test_cols_outside_range(self):
         with pytest.raises(ValueError):
-            plotting.plot_pvalues(true_labels_2_class, p_values=p_vals_2_class, cols=[2,1])
+            plot.plot_pvalues(true_labels_2_class, p_values=p_vals_2_class, cols=[2,1])
 
     def test_her(self):
         import matplotlib as mpl
@@ -73,7 +73,7 @@ class TestPValuesPlot():
         freq_fig, axes = plt.subplots(3,4,figsize = (5*4,5*3))
         for row, c in enumerate(colors):
             for col, m in enumerate(markers_ls):
-                plotting.plot_pvalues(er_labels, er_pvals,
+                plot.plot_pvalues(er_labels, er_pvals,
                     ax=axes[row,col], 
                     order=None,
                     cm = c,
@@ -89,7 +89,7 @@ class TestPValuesPlot():
         # class order
         for row, c in enumerate(colors):
             for col, m in enumerate(markers_ls):
-                plotting.plot_pvalues(er_labels, er_pvals,
+                plot.plot_pvalues(er_labels, er_pvals,
                     ax=axes[row,col], 
                     order='class',
                     alpha=0.8, # Same alpha for both
@@ -107,7 +107,7 @@ class TestPValuesPlot():
         rev_label_fig, axes = plt.subplots(3,4,figsize = (5*4,5*3))
         for row, c in enumerate(colors):
             for col, m in enumerate(markers_ls):
-                plotting.plot_pvalues(er_labels, er_pvals,
+                plot.plot_pvalues(er_labels, er_pvals,
                     ax=axes[row,col], 
                     order='rev class',
                     cm = c,
@@ -120,25 +120,25 @@ class TestPValuesPlot():
 class TestLabelDistributionPlot():
 
     def test_2_class(self):
-        fig1 = plotting.plot_label_distribution(y_true = true_labels_2_class, p_values=p_vals_2_class)
+        fig1 = plot.plot_label_distribution(y_true = true_labels_2_class, p_values=p_vals_2_class)
         fig1.axes[0].set_title('LabelDistribution 2-class')
         _save_clf(fig1,"TestLabelDistPlot.test_2_class")
     
     def test_3_class(self):
-        fig = plotting.plot_label_distribution(y_true = true_labels_3_class, p_values=p_vals_3_class)
+        fig = plot.plot_label_distribution(y_true = true_labels_3_class, p_values=p_vals_3_class)
         fig.axes[0].set_title('LabelDistribution 3-class')
         _save_clf(fig,"TestLabelDistPlot.test_3_class")
 
 class TestCalibrationPlot():
     def test_2_class(self):
-        fig1 = plotting.plot_calibration_clf(true_labels_2_class, p_vals_2_class)
+        fig1 = plot.plot_calibration_clf(true_labels_2_class, p_vals_2_class)
         fig1.axes[0].set_title('Calib plot 2-class')
-        fig2 = plotting.plot_calibration_clf(true_labels_2_class, p_vals_2_class, labels = ['class 0', 'class 1'])
+        fig2 = plot.plot_calibration_clf(true_labels_2_class, p_vals_2_class, labels = ['class 0', 'class 1'])
         fig2.axes[0].set_title('Calib plot 2-class with labels')
         _save_clf(fig2,"TestCalibPlot.test_2_class")
     
     def test_3_class(self):
-        fig = plotting.plot_calibration_clf(true_labels_3_class, p_vals_3_class, labels = ['A', 'B', 'C'])
+        fig = plot.plot_calibration_clf(true_labels_3_class, p_vals_3_class, labels = ['A', 'B', 'C'])
         fig.axes[0].set_title('Calib plot 3-class, labels={A,B,C}')
         _save_clf(fig,"TestCalibPlot.test_3_class")
     
@@ -146,57 +146,57 @@ class TestCalibrationPlot():
         # Plot all in one image
         fig, axes = plt.subplots(2,2,figsize=(10,10))
         # std
-        plotting.plot_calibration_clf(true_labels_3_class, p_values=p_vals_3_class, labels = ['A', 'B', 'C'], ax=axes[0,0], title='std')
+        plot.plot_calibration_clf(true_labels_3_class, p_values=p_vals_3_class, labels = ['A', 'B', 'C'], ax=axes[0,0], title='std')
         # flip x
-        plotting.plot_calibration_clf(true_labels_3_class, p_values=p_vals_3_class, labels = ['A', 'B', 'C'], ax=axes[0,1], flip_x=True, title='flip x')
+        plot.plot_calibration_clf(true_labels_3_class, p_values=p_vals_3_class, labels = ['A', 'B', 'C'], ax=axes[0,1], flip_x=True, title='flip x')
         # flip y
-        plotting.plot_calibration_clf(true_labels_3_class, p_values=p_vals_3_class, labels = ['A', 'B', 'C'], ax=axes[1,0], flip_y=True, title='flip y')
+        plot.plot_calibration_clf(true_labels_3_class, p_values=p_vals_3_class, labels = ['A', 'B', 'C'], ax=axes[1,0], flip_y=True, title='flip y')
         # flip both
-        plotting.plot_calibration_clf(true_labels_3_class, p_values=p_vals_3_class, labels = ['A', 'B', 'C'], ax=axes[1,1], flip_x=True, flip_y=True, title='both')
+        plot.plot_calibration_clf(true_labels_3_class, p_values=p_vals_3_class, labels = ['A', 'B', 'C'], ax=axes[1,1], flip_x=True, flip_y=True, title='both')
         _save_clf(fig,"TestCalibPlot.test_3_class_flip")
 
 
 class TestBubblePlot():
     
     def test_3_class(self):
-        fig1 = plotting.plot_confusion_matrix_bubbles(cm_3_class_015,color_scheme=None)
+        fig1 = plot.plot_confusion_matrix_bubbles(cm_3_class_015,color_scheme=None)
         fig1.axes[0].set_title('Bubbles 3-class 0.15')
         _save_clf(fig1,"TestBubblebPlot.test_3_class")
     
     def test_2_class_percentage(self):
-        fig2 = plotting.plot_confusion_matrix_bubbles(cm_2_class_015_normalized, annotate=True, annotate_as_percentage=True, figsize=(6,7))
+        fig2 = plot.plot_confusion_matrix_bubbles(cm_2_class_015_normalized, annotate=True, annotate_as_percentage=True, figsize=(6,7))
         fig2.axes[0].set_title('Bubbles 2-class 0.15 - percentage - scale 5.5')
         _save_clf(fig2,"TestBubblebPlot.test_2_class_1_percentage")
 
         # Test without normalized CM
         with pytest.raises(ValueError):
-            _ = plotting.plot_confusion_matrix_bubbles(cm_2_class_015, annotate=True, annotate_as_percentage=True, figsize=(6,7))
+            _ = plot.plot_confusion_matrix_bubbles(cm_2_class_015, annotate=True, annotate_as_percentage=True, figsize=(6,7))
     
     def test_2_class(self):
-        fig2 = plotting.plot_confusion_matrix_bubbles(cm_2_class_015, annotate=False, scale_factor=5.5, figsize=(6,7))
+        fig2 = plot.plot_confusion_matrix_bubbles(cm_2_class_015, annotate=False, scale_factor=5.5, figsize=(6,7))
         fig2.axes[0].set_title('Bubbles 2-class 0.15 - no annotation - scale 5.5')
         _save_clf(fig2,"TestBubblebPlot.test_2_class_1")
 
-        fig3 = plotting.plot_confusion_matrix_bubbles(cm_2_class_075)
+        fig3 = plot.plot_confusion_matrix_bubbles(cm_2_class_075)
         fig3.axes[0].set_title('Bubbles 2-class 0.75')
         _save_clf(fig3,"TestBubblebPlot.test_2_class_2")
     
     def test_illegal_color_scheme(self):
         with pytest.warns(UserWarning):
-            fig_ = plotting.plot_confusion_matrix_bubbles(cm_2_class_015, color_scheme='bad_arg', annotate=False, scale_factor=5.5, figsize=(6,7))
+            fig_ = plot.plot_confusion_matrix_bubbles(cm_2_class_015, color_scheme='bad_arg', annotate=False, scale_factor=5.5, figsize=(6,7))
 
 class TestConfusionMatrixHeatmap():
 
     def test_3_class(self):
-        fig1 = plotting.plot_confusion_matrix_heatmap(cm_3_class_015)
+        fig1 = plot.plot_confusion_matrix_heatmap(cm_3_class_015)
         fig1.axes[0].set_title('Heatmap 3-class 0.15')
         _save_clf(fig1,"TestConfMatrixHeatMap.test_3_class")
     
     def test_2_class(self):
-        fig2 = plotting.plot_confusion_matrix_heatmap(cm_2_class_015, cmap="YlGnBu")
+        fig2 = plot.plot_confusion_matrix_heatmap(cm_2_class_015, cmap="YlGnBu")
         fig2.axes[0].set_title('Heatmap 2-class 0.15 (YllGnBu colormap)')
         _save_clf(fig2,"TestConfMatrixHeatMap.test_2_class_1")
-        fig3 = plotting.plot_confusion_matrix_heatmap(cm_2_class_075)
+        fig3 = plot.plot_confusion_matrix_heatmap(cm_2_class_075)
         fig3.axes[0].set_title('Heatmap 2-class 0.75')
         _save_clf(fig3,"TestConfMatrixHeatMap.test_2_class_2")
 

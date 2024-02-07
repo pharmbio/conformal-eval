@@ -2,7 +2,7 @@ import numpy as np
 
 import pytest
 
-from conf_utils import plotting
+from conf_utils import plot
 from conf_utils import cpsign
 from statistics import mean 
 from ...help_utils import _save_clf, _save_reg, get_resource
@@ -21,7 +21,7 @@ reg_pred_incl_infs_file = 'cpsign_reg_predictions_10_incl_inf.csv'
 class TestClassification():
 
     # update plot-settings
-    plotting.update_plot_settings()
+    plot.update_plot_settings()
     
     @pytest.fixture
     def load_data(self):
@@ -31,17 +31,17 @@ class TestClassification():
     def test_load_stats_file_calib(self,load_data):
 
         # plot and save it
-        fig = plotting.plot_calibration(sign_vals=self.signs, error_rates=self.errs, error_rates_sd=self.errs_sd, labels=self.labels)
+        fig = plot.plot_calibration(sign_vals=self.signs, error_rates=self.errs, error_rates_sd=self.errs_sd, labels=self.labels)
         fig.axes[0].set_title('from calculated values CPSign')
         _save_clf(fig,"CPSign_computed_clf.test_load_stats_file")
 
         # No labels and no error-SD
-        fig_no_label = plotting.plot_calibration(sign_vals=self.signs, error_rates=self.errs)
+        fig_no_label = plot.plot_calibration(sign_vals=self.signs, error_rates=self.errs)
         fig_no_label.axes[0].set_title('from CPSign - no labels')
         _save_clf(fig_no_label,"CPSign_computed_clf.test_load_stats_file_2")
 
         # Flip axes
-        fig_flipped = plotting.plot_calibration(sign_vals=self.signs, error_rates=self.errs, 
+        fig_flipped = plot.plot_calibration(sign_vals=self.signs, error_rates=self.errs, 
                                                 error_rates_sd=self.errs_sd, labels=self.labels, 
                                                 flip_x=True,flip_y=True,title='precomputed from CPSign - flipped')
         _save_clf(fig_flipped,"CPSign_computed_clf.test_load_stats_file_3")
@@ -53,18 +53,18 @@ class TestClassification():
         accs = 1 - self.errs
         accs_sd = self.errs_sd
         # plot and save it
-        fig = plotting.plot_calibration(conf_vals=confs,accuracy_vals=accs, accuracy_sd=accs_sd, labels=self.labels)
+        fig = plot.plot_calibration(conf_vals=confs,accuracy_vals=accs, accuracy_sd=accs_sd, labels=self.labels)
         fig.axes[0].set_title('confs + accs from CPSign')
         _save_clf(fig,"CPSign_computed_clf.test_load_stats_file_conf_acc")
 
-        fig_no_label = plotting.plot_calibration(conf_vals=confs,accuracy_vals=accs, accuracy_sd=accs_sd, sd_alpha=.1)
+        fig_no_label = plot.plot_calibration(conf_vals=confs,accuracy_vals=accs, accuracy_sd=accs_sd, sd_alpha=.1)
         fig_no_label.axes[0].set_title('from CPSign - no labels')
         _save_clf(fig_no_label,"CPSign_computed_clf.test_load_stats_file_conf_acc_2")
     
 
     def test_plot_single_calib_line(self, load_data):
         assert self.labels[0].lower() == 'overall'
-        fig = plotting.plot_calibration(sign_vals=self.signs,error_rates=self.errs[:,0], error_rates_sd=self.errs_sd[:,0], labels=self.labels[0], title='cpsign only overall calib')
+        fig = plot.plot_calibration(sign_vals=self.signs,error_rates=self.errs[:,0], error_rates_sd=self.errs_sd[:,0], labels=self.labels[0], title='cpsign only overall calib')
         _save_clf(fig,"TestCLF_CPSign.test_plot_single_calib_line")
 
 
@@ -84,7 +84,7 @@ class TestClassification():
         assert np.array_equal(single, single2)
         assert np.array_equal(multi, multi2)
         assert np.array_equal(empty, empty2)
-        fig = plotting.plot_label_distribution(prop_single=single, sign_vals=signs,prop_multi=multi, prop_empty=empty)
+        fig = plot.plot_label_distribution(prop_single=single, sign_vals=signs,prop_multi=multi, prop_empty=empty)
         _save_clf(fig, "TestCLF_CPSign.label_distr")
     
     def test_load_stats_eff_2(self):
@@ -97,7 +97,7 @@ class TestClassification():
 
     def test_load_preds(self):
         (ys, pvals, labels) = cpsign.load_clf_predictions(get_resource(clf_predictions_file),'target',';')
-        fig = plotting.plot_label_distribution(y_true=ys,p_values= pvals)
+        fig = plot.plot_label_distribution(y_true=ys,p_values= pvals)
         _save_clf(fig, "TestCLF_CPSign.load_clf_pred")
 
 class TestRegression():
@@ -112,7 +112,7 @@ class TestRegression():
         assert errs_sd is not None
         assert len(signs) == len(errs)
         assert len(signs) == len(errs_sd)
-        fig = plotting.plot_calibration(sign_vals=signs,error_rates=errs, error_rates_sd=errs_sd, labels='Error rate', title='cpsign only overall calib')
+        fig = plot.plot_calibration(sign_vals=signs,error_rates=errs, error_rates_sd=errs_sd, labels='Error rate', title='cpsign only overall calib')
         _save_reg(fig,"TestREG_CPSign.test_plot_calib")
     
     def test_load_reg_calib_2(self):
@@ -121,15 +121,15 @@ class TestRegression():
         assert errs_sd is None
         assert len(signs) == len(errs)
         # print("cpsign-reg2: ",signs,errs,errs_sd,labels)
-        fig = plotting.plot_calibration(sign_vals=signs,error_rates=errs, error_rates_sd=errs_sd, labels='Error rate', title='cpsign only overall calib')
+        fig = plot.plot_calibration(sign_vals=signs,error_rates=errs, error_rates_sd=errs_sd, labels='Error rate', title='cpsign only overall calib')
         _save_reg(fig,"TestREG_CPSign.test_plot_calib_2")
 
     def test_load_reg_eff(self):
         (sign_vals, median_widths, mean_widths, median_widths_sd, mean_widths_sd) = cpsign.load_reg_efficiency_stats(get_resource(reg_stats_incl_sd_file), sep='\t')
-        fig = plotting.plot_pred_widths(sign_vals,median_widths)
+        fig = plot.plot_pred_widths(sign_vals,median_widths)
         _save_reg(fig, "TestREG_CPSign.test_plot_widths")
         # With std
-        fig_std = plotting.plot_pred_widths(sign_vals,median_widths, median_widths_sd)
+        fig_std = plot.plot_pred_widths(sign_vals,median_widths, median_widths_sd)
         _save_reg(fig_std, "TestREG_CPSign.test_plot_widths_std")
         assert median_widths_sd is not None
         assert mean_widths_sd is not None

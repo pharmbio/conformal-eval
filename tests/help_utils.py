@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from conf_utils import metrics
 import os
 
-import conf_utils.plotting._utils as plt_utils
+import conf_utils.plot._utils as plt_utils
 
 from .context import output_dir, resource_dir
 # Utility functions
