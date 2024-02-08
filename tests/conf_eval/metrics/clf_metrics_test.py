@@ -3,7 +3,7 @@ import pandas as pd
 import pytest
 
 
-from conf_utils.metrics import (confusion_matrix,frac_errors,frac_multi_label_preds,
+from conf_eval.metrics import (confusion_matrix,frac_errors,frac_multi_label_preds,
                                  frac_single_label_preds,n_criterion,u_criterion,
                                  f_criteria,s_criterion,cp_credibility,cp_confidence)
 from statistics import mean 

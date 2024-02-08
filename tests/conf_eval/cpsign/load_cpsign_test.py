@@ -2,8 +2,8 @@ import numpy as np
 
 import pytest
 
-from conf_utils import plot
-from conf_utils import cpsign
+from conf_eval import plot
+from conf_eval import cpsign
 from statistics import mean 
 from ...help_utils import _save_clf, _save_reg, get_resource
 

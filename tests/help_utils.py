@@ -3,10 +3,10 @@ import pandas as pd
 import pytest
 from matplotlib.figure import Figure 
 import matplotlib.pyplot as plt
-from conf_utils import metrics
+from conf_eval import metrics
 import os
 
-import conf_utils.plot._utils as plt_utils
+import conf_eval.plot._utils as plt_utils
 
 from .context import output_dir, resource_dir
 # Utility functions

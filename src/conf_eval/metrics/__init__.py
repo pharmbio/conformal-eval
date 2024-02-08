@@ -1,5 +1,5 @@
 """
-The `conf_utils.metrics` module contains metrics that can be computed
+The `conf_eval.metrics` module contains metrics that can be computed
 for conformal prediction output.
 """
 

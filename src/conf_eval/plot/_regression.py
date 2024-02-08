@@ -5,10 +5,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.utils import check_consistent_length
 
-from conf_utils._utils import to_numpy1D, to_numpy2D, validate_sign
+from conf_eval._utils import to_numpy1D, to_numpy2D, validate_sign
 
 # The following import sets seaborn etc if available 
-from ._utils import get_fig_and_axis, _set_chart_size, _plot_vline,_set_label_if_not_set, _set_title
+from ._utils import (get_fig_and_axis, _set_chart_size,
+                     _plot_vline,_set_label_if_not_set,_set_title)
 from ._common import add_calib_curve
 
 

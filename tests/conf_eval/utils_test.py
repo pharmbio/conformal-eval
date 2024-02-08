@@ -1,4 +1,4 @@
-from conf_utils import _utils as utils
+from conf_eval import _utils as utils
 
 import numpy as np
 import pandas as pd

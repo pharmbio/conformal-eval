@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 import matplotlib.pyplot as plt
 
-from conf_utils import metrics,plot
+from conf_eval import metrics,plot
 from ...help_utils import _save_clf, get_resource
 
 # Some testing data - 2 class

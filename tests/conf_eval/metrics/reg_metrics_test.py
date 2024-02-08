@@ -3,7 +3,7 @@ import pandas as pd
 import pytest
 
 from ...help_utils import get_resource
-from conf_utils.metrics import (pred_width,frac_error_reg)
+from conf_eval.metrics import (pred_width,frac_error_reg)
 from statistics import mean 
 
 class Test_pred_width():

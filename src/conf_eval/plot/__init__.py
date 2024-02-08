@@ -1,5 +1,5 @@
 """
-The `conf_utils.plot` module contains plotting functions
+The `conf_eval.plot` module contains plotting functions
 for conformal prediction output.
 """
 
