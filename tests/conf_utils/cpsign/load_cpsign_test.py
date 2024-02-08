@@ -23,10 +23,21 @@ class TestClassification():
     # update plot-settings
     plot.update_plot_settings()
     
+    
     @pytest.fixture
     def load_data(self):
         (self.signs, self.errs, self.errs_sd, self.labels) = cpsign.load_calib_stats(get_resource(clf_stats_incl_sd_file), sep='\t')
-      
+    
+    def test_load_non_conf_metrics(self):
+        metrics = cpsign.load_conf_independent_metrics(get_resource(clf_stats_incl_sd_file), sep='\t')
+        print(metrics)
+        first = None
+        for k,v in metrics.items():
+            if first is not None:
+                assert k == first+"_SD"
+                # reset to None
+                first = None 
+        
         
     def test_load_stats_file_calib(self,load_data):
 

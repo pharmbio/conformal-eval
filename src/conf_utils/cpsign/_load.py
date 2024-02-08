@@ -3,7 +3,7 @@
 
 import numpy as np
 from typing import Union
-from sklearn.utils import Bunch
+# from sklearn.utils import Bunch
 import pandas as pd
 import re
 from sklearn.utils import check_consistent_length
@@ -12,12 +12,52 @@ from os import PathLike
 # FilePath definition from pandas._typing
 FilePath = Union[str, PathLike[str]]
 
+def load_conf_independent_metrics(f: FilePath,
+                                  sep: str = ','
+                                  ) -> dict[str,float]:
+    """This function returns the metrics that are not confidence dependent
+    
+    In other words, this will return the data from the columns that are ignored by the
+    other loading functions.
+
+    Parameters
+    ----------
+    f : (FilePath)
+        Path or buffer with the CSV file
+    
+    sep : column-separator, str, default ','
+        Character that separate columns in the CSV
+
+    Returns
+    -------
+        dict[str,float]: Metrics in a dict
+    """
+    df = pd.read_csv(f,sep=sep)
+    metrics = {}
+    acc_reg = re.compile(r'^accuracy',re.IGNORECASE)
+    conf_reg = re.compile(r'^confidence',re.IGNORECASE)
+    prop_reg = re.compile(r'^proportion',re.IGNORECASE)
+    pi_reg = re.compile(r'prediction interval',re.IGNORECASE)
+    avgc_reg = re.compile(r'^AverageC',re.IGNORECASE)
+    
+    for col in reversed(df.columns):
+        # If column matches any of the regex's, break
+        if acc_reg.search(col) or conf_reg.search(col) or prop_reg.search(col) or pi_reg.search(col):
+            break
+        elif avgc_reg.search(col):
+            # average C is confidence-dependent as well
+            continue
+        # Otherwise it should be a metric - take the first item in this column
+        metrics[col] = df[col].iloc[0]
+    # reverse the order again, so _SD metrics are after
+    return dict(reversed(list(metrics.items())))
+
 def load_calib_stats(f: FilePath,
                      sep: str =',',
-                     overall_accuracy_regex: str = r'^accuracy$',
-                     overall_accuracy_sd_regex: str = r'^accuracy_SD$',
-                     accuracy_regex: str = r'^accuracy\((.*?)\)$',
-                     accuracy_sd_regex: str = r'^accuracy\((.*?)\)_SD$'
+                     overall_accuracy_regex: Union[str,re.Pattern] = r'^accuracy$',
+                     overall_accuracy_sd_regex: Union[str,re.Pattern] = r'^accuracy_SD$',
+                     accuracy_regex: Union[str,re.Pattern] = r'^accuracy\((.*?)\)$',
+                     accuracy_sd_regex: Union[str,re.Pattern] = r'^accuracy\((.*?)\)_SD$'
                      ) -> tuple[np.ndarray,np.ndarray,np.ndarray,list[str]]:
     """
     Read a CSV formatted file with calibration statistics from CPSign
@@ -99,10 +139,10 @@ def load_calib_stats(f: FilePath,
 def load_reg_efficiency_stats(f: FilePath, 
                               sep: str =',',
                               skip_inf: bool = True,
-                              median_regex: str = r'.*median.*prediction.*interval.*width.*(?<!_sd)$',
-                              mean_regex: str = r'.*mean.*prediction.*interval.*width.*(?<!_sd)$',
-                              median_sd_regex: str = r'.*median.*prediction.*interval.*width.*_sd$',
-                              mean_sd_regex: str = r'.*mean.*prediction.*interval.*width.*_sd$'
+                              median_regex: Union[str,re.Pattern] = r'.*median.*prediction.*interval.*width.*(?<!_sd)$',
+                              mean_regex: Union[str,re.Pattern] = r'.*mean.*prediction.*interval.*width.*(?<!_sd)$',
+                              median_sd_regex: Union[str,re.Pattern] = r'.*median.*prediction.*interval.*width.*_sd$',
+                              mean_sd_regex: Union[str,re.Pattern] = r'.*mean.*prediction.*interval.*width.*_sd$'
                               ) -> Union[np.ndarray,np.ndarray,np.ndarray,np.ndarray,np.ndarray]:
     """
     Loads efficiency statistics from a regression CP model from CPSign. 
@@ -179,8 +219,8 @@ def load_reg_predictions(f: FilePath,
     y_true_col: Union[str,None] = None,
     sep: str = ',',
     skip_inf: bool = True,
-    lower_regex: str =r'^prediction.*interval.*lower.*\d+',
-    upper_regex: str =r'^prediction.*interval.*upper.*\d+',
+    lower_regex: Union[str,re.Pattern] =r'^prediction.*interval.*lower.*\d+',
+    upper_regex: Union[str,re.Pattern] =r'^prediction.*interval.*upper.*\d+',
     specifies_significance: bool = None) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Loads a CSV file with predictions and converts to the format used by Plot_utils
 
@@ -266,9 +306,10 @@ def load_reg_predictions(f: FilePath,
 
 
 def convert_regression(data: Union[np.ndarray,pd.DataFrame],
-    y_true_index: int,
-    min_index: int,
-    max_index: int) -> tuple[np.ndarray,np.ndarray]:
+                       y_true_index: int,
+                       min_index: list[int],
+                       max_index: list[int]
+                       ) -> tuple[np.ndarray,np.ndarray]:
     """
     Converts a 2D input matrix to a 3D ndarray that
     is required by the metrics and plotting functions
@@ -318,17 +359,17 @@ def convert_regression(data: Union[np.ndarray,pd.DataFrame],
 
 
 
-def load_clf_efficiency_stats(f,
-                              sep=',',
-                              prop_s_regex=r'prop.*single.*sets$',
-                              prop_m_regex=r'prop.*multi.*sets$',
-                              prop_e_regex=r'prop.*empty.*sets$',
-                              prop_s_sd_regex=r'prop.*single.*_SD$',
-                              prop_m_sd_regex=r'prop.*multi.*_SD$',
-                              prop_e_sd_regex=r'prop.*empty.*_SD$'
-                              ):
+def load_clf_efficiency_stats(f: FilePath,
+                              sep: str =',',
+                              prop_s_regex: Union[str,re.Pattern] = r'prop.*single.*sets$',
+                              prop_m_regex: Union[str,re.Pattern] = r'prop.*multi.*sets$',
+                              prop_e_regex: Union[str,re.Pattern] = r'prop.*empty.*sets$',
+                              prop_s_sd_regex: Union[str,re.Pattern] = r'prop.*single.*_SD$',
+                              prop_m_sd_regex: Union[str,re.Pattern] = r'prop.*multi.*_SD$',
+                              prop_e_sd_regex: Union[str,re.Pattern] = r'prop.*empty.*_SD$'
+                              ) -> tuple[np.ndarray,np.ndarray,np.ndarray,np.ndarray,np.ndarray,np.ndarray,np.ndarray]:
     '''
-    Load efficiency statistics from a CP classification model. 
+    Load efficiency statistics from a conformal classification model in CSV format
 
     Only loads statistics that are dependent on confidence level 
 
@@ -394,7 +435,11 @@ def load_clf_efficiency_stats(f,
     return sign_vals, prop_single, prop_multi, prop_empty, prop_single_sd, prop_multi_sd, prop_empty_sd
 
 
-def load_clf_predictions(f, y_true_col, sep=',', pvalue_regex=r'p-value\s+\[label=(?P<label>[^\]]+)\]'):
+def load_clf_predictions(f: FilePath, 
+                         y_true_col: Union[str,None], 
+                         sep: str = ',', 
+                         pvalue_regex: Union[str,re.Pattern] = r'p-value\s+\[label=(?P<label>[^\]]+)\]'
+                         ) -> tuple[np.ndarray,np.ndarray,list[str]]:
     """
     Utility method for loading predictions from a file generated by CPSign
 
