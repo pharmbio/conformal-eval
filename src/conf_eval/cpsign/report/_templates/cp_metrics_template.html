@@ -1,0 +1,43 @@
+<h2>Model evaluation</h2>
+
+<!-- Calibration curve -->
+
+<div class="center-container">
+    <figure>
+        <img src="{{ calib_src }}" alt="Model calibration">
+        <figcaption>Model calibration, where the model Accuracy (y-axis) should correspond well with the confidence level (x-axis).</figcaption>
+    </figure>
+</div>
+  
+
+<!-- Efficiency -->
+<div class="center-container">
+    <figure>
+        <img src="{{ eff_src }}" alt="Model efficiency">
+        <figcaption>{{eff_caption}}</figcaption>
+    </figure>
+</div>
+
+
+<!-- Tabular results -->
+
+<div class="center-container">
+    <table>
+        <caption>Table 2. Performance metrics not dependent on confidence level</caption>
+        <thead>
+            <tr>
+                <th>Metric</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in metric_table %}
+            <tr>
+                {% for cell in row %}
+                <td>{{ cell }}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

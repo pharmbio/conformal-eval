@@ -1,0 +1,23 @@
+<h2>Model evaluation</h2>
+
+
+<!-- Tabular results -->
+
+<table >
+    <thead>
+        <caption>Table 2. Performance metrics</caption>
+        <tr>
+            <th>Metric</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in metric_table %}
+        <tr>
+            {% for cell in row %}
+            <td>{{ cell }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

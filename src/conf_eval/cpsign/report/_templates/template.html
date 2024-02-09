@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>{% if title %}{{ title }}{% else %}Model report{% endif %}</title>
+        <link rel="stylesheet" href="static/style.css">
+    </head>
+    <body>
+        <h1>{%if heading %}{{ heading }} {% else %}Model report{% endif %}</h1>
+        <p>
+        {% if intro %}
+            {{intro}}
+        {% else %}
+            This model is of type {{pt_type}}, and which has been trained on {{n_observations}} observations containing {{ n_features }} features.{{if_clf}}
+            This model has been trained by <a href="https://github.com/arosbio/cpsign">CPSign</a> version {{cpsign_build_version}} and deployed using the <a href="https://github.com/arosbio/cpsign_predict_services">cpsign predict service extension</a>.
+            If this model was deployed as a <b>full</b> server, you can access the SwaggerUI in the <span class="typewriter">base-url</span> and an interactive drawing interface at <span class="typewriter">base-url/draw</span>. 
+
+        {% endif %}
+        </p>
+
+        <!-- Model specifics, hyper-parameter settings etc -->
+        <h2>Hyper-parameter settings</h2>
+        <div class="center-container">
+            <table >
+                <caption>Table 1. Hyper-parameter settings for the predictor and scoring model settings</caption>
+                <thead>
+                    <tr>
+                        
+                        <th>Parameter</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in ml_settings_table %}
+                    <tr>
+                        {% for cell in row %}
+                        <td>{{ cell }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Add a section with validation metrics produced for this model (if present) -->
+        {% if validation_section %}{{validation_section}}{% endif %}
+        
+        <footer>
+            <div class="container">
+
+                <div class="pharmbio">
+                    <a href="https://pharmb.io/"><img src="static/pharmbio-logo-new.png" alt="Pharmbio logo"></a>
+                </div>
+
+                <div class="arosbio">
+                    <a href="https://arosbio.com"><img src="static/arosbio-logo.png" alt="Aros Bio"></a> 
+                </div>
+
+            </div>
+        </footer>
+    </body>
+</html>

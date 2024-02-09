@@ -1,0 +1,152 @@
+@charset "UTF-8";
+html  {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+.center-container {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    flex-direction: column; /* Stack them vertically */
+}
+
+.typewriter {
+    font-family: 'Courier New', Courier, monospace;
+}
+
+table, img {
+    /* Additional styling to ensure tables and images are not stretching too wide */
+    max-width: 90%; /* or any maximum width you prefer */
+    margin: 0 auto; /* Centering if not using flexbox or additional horizontal centering */
+}
+
+table {
+    border-collapse: collapse;
+    min-width: 350px;
+    margin: 20px 0;
+    font-family: Arial, sans-serif;
+    font-size: 0.9em;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    display: table; /* This makes sure the table only takes up the space it needs */
+}
+
+thead tr {
+    background-color: #009879;
+    color: #ffffff;
+    text-align: left;
+}
+
+th, td {
+    padding: 12px 15px;
+}
+
+tbody tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+
+tbody tr:last-of-type {
+    border-bottom: 2px solid #009879;
+}
+
+tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Align the first cell of each row and the first header cell to the left */
+table thead tr th:first-child,
+table tbody tr td:first-child {
+    text-align: left;
+}
+
+/* Align all other header cells and body cells to center, excluding the first child */
+table thead tr th:not(:first-child),
+table tbody tr td:not(:first-child) {
+    text-align: center;
+}
+
+/* Add emphasis to the table header */
+table thead tr th {
+    font-size: 1.1em; /* Slightly larger font for header */
+    border-bottom: 2px solid #009879; /* Horizontal line for separation */
+}
+  
+/* Responsive Table */
+@media screen and (max-width: 600px) {
+    table {
+        display: block;
+        overflow-x: auto;
+    }
+}
+
+figure figcaption,
+table caption {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    font-weight: bold;
+    padding: 10px;
+    font-size: 1.2em;
+    color: #333;
+    line-height: normal; /* Reset line-height to ensure consistency */
+    margin: 0 auto; /* Centering, if necessary */
+}
+  
+figure {
+    display: block; /* Ensure figure is a block-level element, which it is by default */
+    text-align: center; /* Center the figure content, including <img> and <figcaption> */
+    margin: 0 auto; /* Apply margin auto to center the figure element itself if needed */
+}
+  
+figcaption {
+    margin-top: 0px; /* Adjust as necessary for spacing between the image and caption */
+    margin-bottom: 10px;
+}
+
+body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0 20px;
+    position: relative;
+    padding-bottom: 50px;
+}
+
+footer {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0px;
+    margin-top: 5%;
+    padding: .5em;
+    background-color: #CCCCCC;
+    text-align: center;
+    border: none;
+    font-size: small;
+}
+
+footer .container {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    place-content: space-between;
+    height: 100%;
+}
+
+footer .container img {
+    height: 1.5em;
+    background-color: white;
+    padding: .15em;
+    border-collapse: separate;
+    border-radius: 5%;
+}
+
+footer a {
+    text-decoration: none;
+    color: black;
+}
+
+footer a:hover {
+    font-weight: bold;
+}
