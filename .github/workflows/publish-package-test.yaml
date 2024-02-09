@@ -30,8 +30,9 @@ jobs:
       run: poetry build
 
       # Skip for now
+      # poetry config repositories.testpypi https://test.pypi.org/legacy/ &&
 #    - name: Run tests
 #      run: poetry run pytest
     - name: Publish to TestPyPI
-      run: poetry config repositories.testpypi https://test.pypi.org/legacy/ && poetry publish --build -r testpypi -u ${{ secrets.TEST_PYPI_USERNAME }} -p ${{ secrets.TEST_PYPI_API_TOKEN }}
+      run:  poetry publish -r testpypi -u __token__ -p ${{ secrets.TEST_PYPI_API_TOKEN }}
 
