@@ -200,8 +200,4 @@ class TestConfusionMatrixHeatmap():
         fig3.axes[0].set_title('Heatmap 2-class 0.75')
         _save_clf(fig3,"TestConfMatrixHeatMap.test_2_class_2")
 
-class FinalTest():
-
-    def display_plots(self):
-        plt.show()
 

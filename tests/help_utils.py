@@ -9,6 +9,15 @@ import os
 import conf_eval.plot._utils as plt_utils
 
 from .context import output_dir, resource_dir
+
+
+reg_dir = os.path.join(output_dir, 'reg')
+clf_dir = os.path.join(output_dir, 'clf')
+# Create output dirs if not there yet
+os.makedirs(reg_dir,exist_ok=True)
+os.makedirs(clf_dir,exist_ok=True)
+
+
 # Utility functions
 
 def get_resource(file_name:str)->str:
@@ -19,7 +28,7 @@ def _save_reg(fig, test_func, close_after=True):
     ax1 = fig.axes[0]
     ax1_orig_title = ax1.get_title()
     ax1.set_title(ax1_orig_title+":"+test_func)
-    fig.savefig(output_dir+'/reg/'+test_func+".pdf", bbox_inches='tight')
+    fig.savefig(os.path.join(reg_dir,test_func+".pdf"), bbox_inches='tight')
     ax1.set_title(ax1_orig_title)
     if close_after:
         plt.close(fig)
@@ -29,7 +38,7 @@ def _save_clf(fig, test_func, close_after=True):
     ax1 = fig.axes[0]
     ax1_orig_title = ax1.get_title()
     ax1.set_title(ax1_orig_title+":"+test_func)
-    fig.savefig(output_dir+'/clf/'+test_func+".pdf", bbox_inches='tight')
+    fig.savefig(os.path.join(clf_dir,test_func+".pdf"), bbox_inches='tight')
     ax1.set_title(ax1_orig_title)
     if close_after:
         plt.close(fig)
@@ -92,5 +101,4 @@ class TestPlottingUtils():
         fig, _ = plt_utils.get_fig_and_axis(figsize=(10,5))
         _save_reg(fig,'test_utility_save_func')
         _save_clf(fig,'test_utility_save_func_clf')
-
 
