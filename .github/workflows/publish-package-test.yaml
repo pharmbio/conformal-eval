@@ -1,0 +1,44 @@
+name: Publish conformal-eval to TestPyPI
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - '*'
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+
+    - name: Install Poetry
+      run: |
+        curl -sSL https://install.python-poetry.org | python3 -
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+    - name: Install dependencies
+      run: poetry install
+
+    - name: Build (for verification)
+      run: poetry build
+
+      # Skip for now
+#    - name: Run tests
+#      run: poetry run pytest
+
+    - name: Publish to TestPyPI
+      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+      run: poetry publish --build -r testpypi -u ${{ secrets.TEST_PYPI_USERNAME }} -p ${{ secrets.TEST_PYPI_API_TOKEN }}
+      env:
+        POETRY_PYPI_TOKEN_TESTPYPI: ${{ secrets.TEST_PYPI_API_TOKEN }}
