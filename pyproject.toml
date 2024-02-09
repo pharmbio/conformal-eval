@@ -1,35 +1,55 @@
-[project]
+[tool.poetry]
 name = "conformal-eval"
 version = "1.0.0b1"
-authors = [
-  { name="Staffan Arvidsson McShane", email="staffan.arvidsson@gmail.com" },
-]
 description = "A package with utility functions for evaluating conformal predictors"
-readme = "README.md"
-requires-python = ">=3.7"
+authors = ["Staffan Arvidsson McShane <staffan.arvidsson@gmail.com>"]
+license = "MIT"
+
+# URL metadata
+homepage = "https://github.com/pharmbio/plot_utils"
+repository = "https://github.com/pharmbio/plot_utils"
+documentation = "https://example.com/package-documentation"
+readme = "README.md"  # Specifies the file to use as the README for the package
+
+# Classifiers for PyPI
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
-dependencies = [
-    "matplotlib>=3.4",
-    "numpy>=1.19",
-    "pandas>=2.0",
-    "scikit-learn>=1.0.0",
-    "seaborn>=0.12"
-]
 
+[tool.poetry.dependencies]
+python = "^3.8"
+matplotlib = "^3.4"
+numpy = "^1.19"
+pandas = "^2.0"
+scikit-learn = "^1.0.0"
+seaborn = "^0.12"
+Jinja2 = ">=3.0"
 
+[tool.poetry.dev-dependencies]
+pytest = "^7.4"
 
-[project.optional-dependencies]
-report = ["Jinja2 >= 3.0"]
+# Specify which packages are for conformal-eval[report]
+[tool.poetry.extras]
+report = ["Jinja2"]
 
+[[tool.poetry.packages]]
+from = "src"
+include = "conf_eval"
+# include = [{ from = "src", include = "conf_eval" }]
+
+[tool.poetry.scripts]
+cpsign-report = "conf_eval.cpsign.report.html:main"
 
 
 [build-system]
-requires = ["setuptools>=60", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+# [build-system]
+# requires = ["setuptools>=60", "wheel"]
+# build-backend = "setuptools.build_meta"
 
 
 
@@ -40,7 +60,3 @@ addopts = [
 pythonpath = "src"
 
 
-
-[project.urls]
-Homepage = "https://github.com/pharmbio/plot_utils"
-Repository = "https://github.com/pharmbio/plot_utils"

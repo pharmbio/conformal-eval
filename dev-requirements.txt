@@ -1,6 +1,4 @@
 -r requirements.txt
 
 pytest>=7.4
-setuptools>=60.0.0
-build
-twine
+poetry>=1.0.0
