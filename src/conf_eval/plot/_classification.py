@@ -1124,8 +1124,6 @@ def plot_confusion_matrix_heatmap(confusion_matrix,
         for the `cbar_kws` and other possible customizations. 
     """
     
-    if not _using_seaborn:
-        raise RuntimeError('Seaborn is required when using this function')
     import seaborn as sns
     
     fig, ax = get_fig_and_axis(ax, figsize)

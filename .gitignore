@@ -9,6 +9,7 @@ test_output/
 # Python venv directory and contents
 venv/
 *-venv/
+test-py/
 
 # Ignore dist and build output
 dist/
