@@ -8,16 +8,6 @@ from sklearn.utils import check_consistent_length
 import pandas as pd
 
 
-_using_seaborn = False
-# Try to import sns as they create somewhat nicer plots
-try:
-    import seaborn as sns
-    sns.set_theme()
-    logging.debug('Using Seaborn plotting defaults')
-    _using_seaborn = True
-except ImportError as e:
-    logging.debug('Seaborn not available - using Matplotlib defaults')
-    pass 
 
 __DEFAULT_FIG_SIZE = (10,8)
 

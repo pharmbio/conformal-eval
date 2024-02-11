@@ -12,7 +12,7 @@ import pandas as pd
 from .._utils import get_n_classes,get_str_labels,to_numpy2D,to_numpy1D_int, validate_sign
 
 # The following import sets seaborn etc if available 
-from ._utils import get_fig_and_axis, cm_as_list, _using_seaborn, _set_title, _set_label_if_not_set,_set_chart_size
+from ._utils import get_fig_and_axis, cm_as_list, _set_title, _set_label_if_not_set,_set_chart_size
 from ._common import add_calib_curve, _default_color_map
 
 from ..metrics import frac_errors, frac_single_label_preds

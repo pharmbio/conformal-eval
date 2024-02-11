@@ -9,6 +9,7 @@ report_out_dir = os.path.join(output_dir,'report')
 
 def _get_path(rel_path):
     return os.path.join(report_out_dir,rel_path)
+
 def test_out_path():
     print("report_out_dir:",report_out_dir)
 

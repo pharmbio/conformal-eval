@@ -2,7 +2,6 @@
 """
 
 import argparse,sys
-from conf_eval.cpsign.report._html import generate_html
 
 class CustomArgumentParser(argparse.ArgumentParser):
     def error(self, message):
@@ -20,15 +19,20 @@ def main():
     
     # Add possible arguments 
     parser.add_argument("-mf","--model-file", required=True, help="Path to the model file")
-    parser.add_argument("-vf","--validation-file", required=False, help="Path to the optional validation file", default=None)
-    parser.add_argument("-of","--output-file", required=False, help="Path to where to save the generated HTML page and static files. This should either be a file ending with `.html` (e.g. model-report.html) or a directory name.", default='model-report.html')
-    parser.add_argument("-if","--info-file", required=False, help="Path to a file with extra information about the model, can include html-tags for better formatting", default=None)
+    parser.add_argument("-vf","--validation-file", required=False, 
+                        help="Path to the optional validation file", default=None)
+    parser.add_argument("-of","--output-file", required=False, 
+                        help="Path to where to save the generated HTML page and static files. This should either be a file ending with `.html` (e.g. model-report.html) or a directory name.", 
+                        default='model-report.html')
+    parser.add_argument("-if","--info-file", required=False, 
+                        help="Path to a file with extra information about the model, can include html-tags for better formatting", default=None)
     
     # Parse the arguments
     args = parser.parse_args()
     
     # Call the main function with the parsed arguments
     try:
+        from conf_eval.cpsign.report._html import generate_html
         generate_html(args.model_file, args.output_file, args.validation_file, args.info_file)
     except Exception as e:
         sys.stderr.write(f'\nError: {e}\n\n')

@@ -1,8 +1,10 @@
 from typing import Optional
 
-import os, shutil
+import shutil
 import zipfile
 import json
+from pathlib import Path
+from typing import Union
 
 try:
     from jinja2 import Environment, FileSystemLoader
@@ -15,23 +17,34 @@ _static_sub_dir_name = "_static"
 _static_output_dir_name = "static"
 
 _default_page_name = "model-report.html"
-_package_dir = os.path.dirname(os.path.abspath(__file__))
-_template_dir = os.path.join(_package_dir,"_templates")
+_package_dir = Path(__file__).absolute().parent
+_template_dir = _package_dir /"_templates"
 _figsize = (6,4)
 
-def generate_html(model_file: str,
-                  output_file: str = _default_page_name,
-                  validation_file: Optional[str] = None,
-                  info_file: Optional[str] = None,
-                  template_file: Optional[str] = None,
-                  validation_template: Optional[str] = None) -> None:
+def generate_html(model_file: Union[str, Path],
+                  output_file: Union[str, Path] = _default_page_name,
+                  validation_file: Optional[Union[str, Path]] = None,
+                  info_file: Optional[Union[str, Path]] = None,
+                  template_file: Optional[Union[str, Path]] = None,
+                  validation_template: Optional[Union[str, Path]] = None) -> None:
+    # convert to correct format
+    model_file = __resolve_path(model_file)
+    output_file = __resolve_path(output_file)
+    if validation_file is not None:
+        validation_file = __resolve_path(validation_file)
+    if info_file is not None:
+        info_file = __resolve_path(info_file)
+    if template_file is not None:
+        template_file = __resolve_path(template_file)
+    if validation_template is not None:
+        validation_template = __resolve_path(validation_template)
 
     output_dir, page_name = _setup_output_dir_and_file(output_file)
-    static_output_dir = os.path.join(output_dir,_static_output_dir_name)
+    static_output_dir = output_dir /_static_output_dir_name
     
     # Validate model_file being a valid path
-    if not os.path.exists(model_file):
-        raise FileNotFoundError(f"Parameter model_file \"{model_file}\" does not exist")
+    if not model_file.exists() or not model_file.is_file():
+        raise FileNotFoundError(f"Parameter model_file \"{model_file}\" does not exist or is not a file")
     # Load the meta data about the model
     model_data = {}
     with zipfile.ZipFile(model_file, 'r') as zip_ref:
@@ -111,20 +124,51 @@ def generate_html(model_file: str,
     html_content = template.render(data)
 
     # Save the generated HTML to a file
-    with open(os.path.join(output_dir,page_name), 'w') as file:
+    with (output_dir /page_name).open(mode='w') as file:
         file.write(html_content)
     # Copy all static files for nice output
-    shutil.copytree(os.path.join(_package_dir,_static_sub_dir_name), static_output_dir,dirs_exist_ok=True)
+    shutil.copytree(_package_dir/_static_sub_dir_name, static_output_dir,dirs_exist_ok=True)
 
 
+def __resolve_path(input_path: Union[str, Path]) -> Path:
+    if isinstance(input_path, Path):
+        return input_path.expanduser()
+    elif isinstance(input_path,str):
+        return Path(input_path).expanduser().resolve()
+    else:
+        raise ValueError('Input was neither a string or Path instance: ' + str(input_path))
 
-def __clear_directory_contents(directory):
-    for item in os.listdir(directory):
-        item_path = os.path.join(directory, item)
-        if os.path.isfile(item_path) or os.path.islink(item_path):
-            os.unlink(item_path)  # Remove files and links
-        elif os.path.isdir(item_path):
-            shutil.rmtree(item_path)  # Remove directories
+def __clear_directory_contents(dir: Path):
+    def is_dangerous_path(dir: Path) -> bool:
+        # List of paths that should not be cleared
+        dangerous_paths = [
+            Path.home(),  # User's home directory
+            Path("/"),  # Root directory
+            # Add any other directories you want to protect
+        ]
+        
+        # Resolve the absolute path and compare with dangerous paths
+        dir = dir.resolve()
+        # Check if the path or any of its parents is in the dangerous_paths list
+        return dir in dangerous_paths or any(dir.parent == path for path in dangerous_paths)
+
+    # make sure to not delete anything important by mistake 
+    if is_dangerous_path(dir):
+        raise ValueError(f"Refusing to clear directory contents of {dir} due to safety constraints.")
+    
+    for child in dir.iterdir():  # Replaces dir.walk()
+        if child.is_file():
+            child.unlink()
+        elif child.is_dir():
+            __clear_directory_contents(child)  # Recursively clear and delete directories
+            child.rmdir()
+    # for item in dir.iterdir():
+        
+        # item_path = os.path.join(dir, item)
+        # if os.path.isfile(item_path) or os.path.islink(item_path):
+        #     os.unlink(item_path)  # Remove files and links
+        # elif os.path.isdir(item_path):
+        #     shutil.rmtree(item_path)  # Remove directories
 
 def __get_pt_type(pt_id):
     """
@@ -152,17 +196,19 @@ def __get_clf_extra_info(data_dict):
     labels_lst = ', '.join(list(labels.keys()))
     return f" The dataset contains {len(labels)} classes with the following names: {labels_lst}."
     
-def _setup_output_dir_and_file(file_or_dir: str) -> (str, str):
+def _setup_output_dir_and_file(file_or_dir: Path) -> (str, str):
+    if not isinstance(file_or_dir, Path):
+        raise ValueError('Input of incorrect')
     # Decide the output directory of where a directory of where to save things
-    if file_or_dir.endswith('.html'):
+    if file_or_dir.suffix =='.html':
         # Create output file directory
         # Extract the directory part of the output path
-        output_dir = os.path.dirname(file_or_dir)
+        output_dir = file_or_dir.absolute().parent
         # If empty - use the current working directory
         if output_dir is None:
-            output_dir = os.getcwd()
+            output_dir = Path.cwd()
         # set the html file name
-        page_name = os.path.basename(file_or_dir)
+        page_name = file_or_dir.name
     else:
         # Otherwise 
         output_dir = file_or_dir
@@ -170,10 +216,10 @@ def _setup_output_dir_and_file(file_or_dir: str) -> (str, str):
         page_name = _default_page_name
     
     # Create the dir and static-output dirs if needed
-    static_out_dir = os.path.join(output_dir, _static_output_dir_name)
+    static_out_dir = output_dir / _static_output_dir_name
     try:
         # Ensure the directory exists
-        os.makedirs(static_out_dir, exist_ok=True)
+        static_out_dir.mkdir(parents=True,exist_ok=True)
     except Exception as e:
         raise Exception(f'Error when creating output directory: {e}')
     
@@ -204,11 +250,11 @@ def __generate_cp_validation_section(validation_file, validation_template, stati
     ### CALIBRATION PLOT
     (sign_vals, error_rates, error_rates_SD, labels) = cpsign.load_calib_stats(validation_file, sep=dialect.delimiter)
     # Validate the standard deviations
-    error_rates_SD = error_rates_SD if error_rates.shape == error_rates_SD.shape else None
+    error_rates_SD = error_rates_SD if error_rates_SD is not None and  error_rates.shape == error_rates_SD.shape else None
     calib_fig = plot.plot_calibration(sign_vals=sign_vals, error_rates=error_rates,
                                       error_rates_sd=error_rates_SD, labels=labels,
                                       figsize=_figsize, flip_x=True, flip_y=True, tight_layout=True) 
-    calib_fig.savefig(os.path.join(static_output_dir,'calibration_fig.svg'))
+    calib_fig.savefig(static_output_dir / 'calibration_fig.svg')
     
     ### EFFICIENCY PLOT
     if is_regression:
@@ -231,7 +277,7 @@ def __generate_cp_validation_section(validation_file, validation_template, stati
         eff_fig = plot.plot_label_distribution(sign_vals=sign_vals, prop_single=prop_single, prop_multi = prop_multi, prop_empty=prop_empty, figsize=_figsize, tight_layout=True)
         eff_caption = 'Label distribution plot'
         
-    eff_fig.savefig(os.path.join(static_output_dir,'efficiency_fig.svg'))
+    eff_fig.savefig(static_output_dir /'efficiency_fig.svg')
     
     # Generate a table of the other metrics
     metric_dict = cpsign.load_conf_independent_metrics(validation_file,sep=dialect.delimiter)
