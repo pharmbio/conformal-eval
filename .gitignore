@@ -8,9 +8,9 @@ test_output/
 
 # Python venv directory and contents
 venv/
-dev-env/
+*-venv/
 
 # Ignore dist and build output
 dist/
 *egg-info/
-
+poetry.lock
