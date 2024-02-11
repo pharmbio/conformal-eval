@@ -1,4 +1,0 @@
--r requirements.txt
-
-pytest>=7.4
-poetry>=1.0.0

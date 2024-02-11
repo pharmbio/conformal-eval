@@ -1,6 +1,0 @@
-matplotlib>=3.5
-numpy>=1.2
-pandas>=2.1
-scikit-learn>=1.2.0
-seaborn>=0.12
-Jinja2 >= 3.0
