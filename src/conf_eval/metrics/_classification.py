@@ -9,7 +9,8 @@ for all predictions.
 
 import numpy as np
 import pandas as pd
-from collections import Counter
+from typing import Union
+# from collections import Counter
 
 from .._utils import *
 from sklearn.utils import check_consistent_length
@@ -17,12 +18,17 @@ from sklearn.utils import check_consistent_length
 _default_significance = 0.8
 
 
+MatrixLike = Union[np.ndarray,pd.DataFrame,list[list[float]]]
+FloatListLike = Union[list[float],np.ndarray,pd.Series]
+
 ######################################
 ### OBSERVED METRICS
 ######################################
 
 
-def frac_errors(y_true,p_values,sign_vals):
+def frac_errors(y_true: MatrixLike,
+                p_values: MatrixLike,
+                sign_vals: Union[float,FloatListLike]) -> tuple[float,float]:
     """**Classification:** Calculate the fraction of errors for each significance level
     
     Parameters
@@ -33,7 +39,7 @@ def frac_errors(y_true,p_values,sign_vals):
     p_values : 2D numpy array or DataFrame
         The predicted p-values, first column for the class 0, second for class 1, ..
 
-    sign_vals : float in [0,1]
+    sign_vals : float in [0,1], list[float], 1D ndarray
         Significance levels the fraction of errors should be calculated for
     
     Returns
@@ -70,7 +76,8 @@ def _get_predicted(p_vals,sign_vals):
         preds[:,:,i] = p_vals > s
     return preds
 
-def _unobs_frac_single_label_preds(p_values, sign):
+def _unobs_frac_single_label_preds(p_values: MatrixLike, 
+                                   sign: float) -> float:
     """**Classification** - Calculate the fraction of single label predictions
     
     Parameters
@@ -91,7 +98,9 @@ def _unobs_frac_single_label_preds(p_values, sign):
     predictions = p_values > sign
     return np.mean(np.sum(predictions, axis=1) == 1)
 
-def frac_single_label_preds(y_true, p_values, sign):
+def frac_single_label_preds(y_true: MatrixLike, 
+                            p_values: MatrixLike, 
+                            sign: float) -> tuple[float,Union[float,None],Union[float,None]]:
     """**Classification** - Calculate the fraction of single label predictions
     
     It is possible to both calculate this as an observed and un-observed metric,
@@ -116,15 +125,15 @@ def frac_single_label_preds(y_true, p_values, sign):
     frac_single : float
         Overall fraction of single-label-prediction
     
-    frac_correct_single : float, optional
-        Fraction of correct single label predictions, not returned if no `y_true` was given
+    frac_correct_single : float or None
+        Fraction of correct single label predictions, None if no `y_true` was given
     
-    frac_incorrect_single : float, optional
-        Fraction of incorrect single label predictions, not returned if no `y_true` was given
+    frac_incorrect_single : float or None
+        Fraction of incorrect single label predictions, None if no `y_true` was given
     """
     # If no y_true - calculate in an un-observed fashion
     if y_true is None:
-        return _unobs_frac_single_label_preds(p_values, sign),
+        return _unobs_frac_single_label_preds(p_values, sign),None,None
     
     validate_sign(sign)
     p_values = to_numpy2D(p_values,'p_values')
@@ -148,7 +157,8 @@ def frac_single_label_preds(y_true, p_values, sign):
     
     return (n_corr+n_incorr)/n_total, n_corr/n_total, n_incorr/n_total
 
-def _unobs_frac_multi_label_preds(p_values, sign):
+def _unobs_frac_multi_label_preds(p_values: MatrixLike, 
+                                  sign: float) -> float:
     """**Classification** - Calculate the fraction of multi-label predictions
     
     Calculates the fraction of multi-label predictions in an un-observed fashion - 
@@ -177,7 +187,9 @@ def _unobs_frac_multi_label_preds(p_values, sign):
     predictions = p_values > sign
     return np.mean(np.sum(predictions, axis=1) > 1)
 
-def frac_multi_label_preds(y_true, p_values, sign):
+def frac_multi_label_preds(y_true: MatrixLike,
+                           p_values: MatrixLike,
+                           sign: float) -> tuple[float,Union[float,None],Union[float,None]]:
     """**Classification** - Calculate the fraction of multi-label predictions
     
     It is possible to both calculate this as an observed and un-observed metric,
@@ -211,7 +223,7 @@ def frac_multi_label_preds(y_true, p_values, sign):
     """
     # If no y_true - calculate in an un-observed fashion
     if y_true is None:
-        return _unobs_frac_multi_label_preds(p_values, sign), 
+        return _unobs_frac_multi_label_preds(p_values, sign), None, None
     
     validate_sign(sign)
     p_values = to_numpy2D(p_values,'p_values')
@@ -235,7 +247,8 @@ def frac_multi_label_preds(y_true, p_values, sign):
     
     return (n_corr+n_incorr)/n_total, n_corr/n_total, n_incorr/n_total
 
-def obs_fuzziness(y_true, p_values):
+def obs_fuzziness(y_true: MatrixLike, 
+                  p_values: MatrixLike) -> float:
     """**Classification** - Calculate the Observed Fuzziness (OF)
     
     Significance independent metric, smaller is better
@@ -267,11 +280,11 @@ def obs_fuzziness(y_true, p_values):
     
     return of_sum / len(y_true)
 
-def confusion_matrix(y_true, 
-                            p_values, 
-                            sign, 
-                            labels=None, 
-                            normalize_per_class = False):
+def confusion_matrix(y_true: MatrixLike,
+                     p_values: MatrixLike,
+                     sign: float, 
+                     labels: Union[list[str],None] = None, 
+                     normalize_per_class: bool = False) -> pd.DataFrame:
     """**Classification** - Calculate a conformal confusion matrix
     
     A conformal confusion matrix includes the number of predictions for each class, empty prediction sets and
@@ -362,11 +375,11 @@ def confusion_matrix(y_true,
     
     return pd.DataFrame(result_matrix, columns=labels, index = row_labels)
 
-def confusion_matrices_multiclass(y_true, 
-                            p_values, 
-                            sign, 
-                            labels=None, 
-                            normalize_per_class = False):
+def confusion_matrices_multiclass(y_true: MatrixLike,
+                                  p_values: MatrixLike,
+                                  sign: float,
+                                  labels: Union[list[str],None] = None,
+                                  normalize_per_class: bool = False) -> pd.DataFrame:
     """**Classification** - Calculate two confusion matrix only for the incorrect multiclasses and only for the correct multiclass
     
     The correct multiclass confusion matrix will demonstrate the distribution of classes available in the multiclass cases where 
@@ -463,7 +476,7 @@ def confusion_matrices_multiclass(y_true,
 ########################################
 
 
-def cp_credibility(p_values):
+def cp_credibility(p_values: MatrixLike) -> float:
     """**Classification** - CP Credibility
     
     Mean of the largest p-values
@@ -481,7 +494,7 @@ def cp_credibility(p_values):
     sorted_matrix = np.sort(p_values, axis=1)
     return np.mean(sorted_matrix[:,-1]) # last index is the largest
 
-def cp_confidence(p_values):
+def cp_confidence(p_values: MatrixLike) -> float:
     """**Classification** - Conformal Confidence 
     
     Mean of 1-'second largest p-value'
@@ -499,7 +512,7 @@ def cp_confidence(p_values):
     sorted_matrix = np.sort(p_values, axis=1)
     return np.mean(1-sorted_matrix[:,-2])
 
-def s_criterion(p_values):
+def s_criterion(p_values: MatrixLike) -> float:
     """**Classification** - S criterion
     
     Mean of the sum of all p-values
@@ -516,7 +529,8 @@ def s_criterion(p_values):
     p_values = to_numpy2D(p_values,'p_values')
     return np.mean(np.sum(p_values, axis=1))
 
-def n_criterion(p_values, sign=_default_significance):
+def n_criterion(p_values: MatrixLike, 
+                sign: float =_default_significance) -> float:
     """**Classification** - N criterion
     
     "Number" criterion - the average number of predicted labels. Significance dependent metric
@@ -537,7 +551,7 @@ def n_criterion(p_values, sign=_default_significance):
     validate_sign(sign)
     return np.mean(np.sum(p_values > sign, axis=1))
 
-def u_criterion(p_values):
+def u_criterion(p_values: MatrixLike) -> float:
     """**Classification** - U criterion - "Unconfidence"
 
     Smaller values are preferable
@@ -555,7 +569,7 @@ def u_criterion(p_values):
     sorted_matrix = np.sort(p_values, axis=1)
     return np.mean(sorted_matrix[:,-2])
 
-def f_criteria(p_values):
+def f_criteria(p_values: MatrixLike) -> float:
     """**Classification** - F criterion 
     
     Average fuzziness. Average of the sum of all p-values apart from the largest one.
@@ -576,5 +590,5 @@ def f_criteria(p_values):
         # Mean of only the smallest p-value
         return np.mean(sorted_matrix[:,0]) 
     else:
-        # Here we must take the sum of the values appart from the first column
+        # Here we must take the sum of the values apart from the first column
         return np.mean(np.sum(sorted_matrix[:,:-1], axis=1))

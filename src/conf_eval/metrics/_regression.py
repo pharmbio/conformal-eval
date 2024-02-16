@@ -4,9 +4,14 @@
 
 import numpy as np
 import pandas as pd
+from typing import Union
 from .._utils import *
 
-def pred_width(predictions, median: bool = True):
+RegressionPredictions = Union[np.ndarray,pd.DataFrame,list[list[list[float]]]]
+FloatListLike = Union[list[float],np.ndarray,pd.Series]
+
+def pred_width(predictions: RegressionPredictions, 
+               median: bool = True) -> Union[float,np.ndarray]:
     """**Regression** - Calculates the median or mean prediction interval width
 
     Parameters
@@ -37,7 +42,8 @@ def pred_width(predictions, median: bool = True):
     
     return (np.median(widths, axis=0) if median else np.mean(widths, axis=0))
     
-def frac_error_reg(y_true, predictions):
+def frac_error_reg(y_true: FloatListLike, 
+                   predictions: RegressionPredictions) -> Union[float,np.ndarray]:
     """**Regression** - Calculate the fraction of errors
 
     Parameters

@@ -182,14 +182,14 @@ class TestObservedMetrics():
     def test_single_label_ext(self, set_up):
         for s in np.arange(0,1,0.1):
             overall, correct_s, incorrect_s = frac_single_label_preds(self.true_labels, self.p_values, s)
-            all_single, = frac_single_label_preds(None, self.p_values, s)
+            all_single,_,_ = frac_single_label_preds(None, self.p_values, s)
             assert pytest.approx(all_single) == correct_s+incorrect_s
     
 
     def test_multilabel_ext(self, set_up):
         for s in np.arange(0,1,0.1):
             overall, correct_m, incorrect_m = frac_multi_label_preds(self.true_labels, self.p_values, s)
-            all_m, = frac_multi_label_preds(None, self.p_values, s)
+            all_m,_,_ = frac_multi_label_preds(None, self.p_values, s)
             assert pytest.approx(all_m) == correct_m+incorrect_m
             assert 0 == incorrect_m # For binary - all multi-label are always correct!
     
@@ -197,7 +197,7 @@ class TestObservedMetrics():
     def test_multilabel_ext_3class(self, set_up):
         for s in np.arange(0,.1,0.01):
             overall, correct_m, incorrect_m = frac_multi_label_preds(self.m_true_labels, self.m_p_values, s)
-            all_m, = frac_multi_label_preds(None, self.m_p_values, s)
+            all_m,_,_ = frac_multi_label_preds(None, self.m_p_values, s)
             assert pytest.approx(correct_m+incorrect_m) == all_m
 
     
@@ -217,7 +217,7 @@ class TestObservedMetrics():
         s = 0.11
         all_m, correct_m, incorrect_m = frac_multi_label_preds([0,0,0,3], p, s)
         assert all_m == correct_m + incorrect_m
-        all_m, = frac_multi_label_preds(None, p, s)
+        all_m,_,_ = frac_multi_label_preds(None, p, s)
         assert .25 == correct_m
         assert .75 == incorrect_m
         assert all_m == incorrect_m+correct_m

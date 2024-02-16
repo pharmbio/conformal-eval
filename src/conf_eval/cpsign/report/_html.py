@@ -162,15 +162,8 @@ def __clear_directory_contents(dir: Path):
         elif child.is_dir():
             __clear_directory_contents(child)  # Recursively clear and delete directories
             child.rmdir()
-    # for item in dir.iterdir():
-        
-        # item_path = os.path.join(dir, item)
-        # if os.path.isfile(item_path) or os.path.islink(item_path):
-        #     os.unlink(item_path)  # Remove files and links
-        # elif os.path.isdir(item_path):
-        #     shutil.rmtree(item_path)  # Remove directories
 
-def __get_pt_type(pt_id):
+def __get_pt_type(pt_id) -> str:
     """
     From CPSign:
     (1) ACP_Classification
@@ -196,7 +189,7 @@ def __get_clf_extra_info(data_dict):
     labels_lst = ', '.join(list(labels.keys()))
     return f" The dataset contains {len(labels)} classes with the following names: {labels_lst}."
     
-def _setup_output_dir_and_file(file_or_dir: Path) -> (str, str):
+def _setup_output_dir_and_file(file_or_dir: Path) -> tuple[str, str]:
     if not isinstance(file_or_dir, Path):
         raise ValueError('Input of incorrect')
     # Decide the output directory of where a directory of where to save things
