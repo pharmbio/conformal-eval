@@ -1,6 +1,10 @@
 from sklearn.preprocessing import OneHotEncoder
 import numpy as np
 import pandas as pd
+from typing import Union
+
+MatrixLike = Union[np.ndarray,pd.DataFrame,list[list[float]]]
+FloatListLike = Union[list[float],np.ndarray,pd.Series]
 
 __sklearn_1_2_0_or_later = False
 

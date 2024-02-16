@@ -10,16 +10,12 @@ for all predictions.
 import numpy as np
 import pandas as pd
 from typing import Union
-# from collections import Counter
 
 from .._utils import *
 from sklearn.utils import check_consistent_length
 
 _default_significance = 0.8
 
-
-MatrixLike = Union[np.ndarray,pd.DataFrame,list[list[float]]]
-FloatListLike = Union[list[float],np.ndarray,pd.Series]
 
 ######################################
 ### OBSERVED METRICS

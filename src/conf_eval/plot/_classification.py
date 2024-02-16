@@ -8,11 +8,13 @@ import warnings
 import numpy as np
 from sklearn.utils import check_consistent_length
 import pandas as pd
+from typing import Union
 
 from .._utils import get_n_classes,get_str_labels,to_numpy2D,to_numpy1D_int, validate_sign
 
 # The following import sets seaborn etc if available 
 from ._utils import get_fig_and_axis, cm_as_list, _set_title, _set_label_if_not_set,_set_chart_size
+from .._utils import FloatListLike, MatrixLike
 from ._common import add_calib_curve, _default_color_map
 
 from ..metrics import frac_errors, frac_single_label_preds
@@ -72,26 +74,26 @@ def __get_kwargs(kwargs, alphas, cls):
     else:
         raise ValueError('parameter `alphas` must be a single float, or list/tuple of floats of same length as number of classes, was: {}'.format(type(alphas)))
 
-def plot_pvalues(y_true,
-    p_values,
-    cols = [0,1],
-    labels = None,
-    ax = None,
-    figsize = (10,8),
+def plot_pvalues(y_true: FloatListLike,
+    p_values: MatrixLike,
+    cols: tuple[int,int] = [0,1],
+    labels: Union[list[str],None] = None,
+    ax: Union[mpl.axes.Axes, None] = None,
+    figsize: tuple[float,float] = (10,8),
     chart_padding = 0.025,
     cm = None,
     markers = None,
     alphas = None,
     sizes = None,
-    order = "freq",
+    order: str = "freq",
     split_chart = True,
     title = None,
     x_label = 'p-value {class}',
     y_label = 'p-value {class}',
-    add_legend = True,
-    tight_layout = True,
+    add_legend: bool = True,
+    tight_layout: bool = True,
     fontargs = None,
-    **kwargs):
+    **kwargs) -> mpl.figure.Figure:
     """Plot p-values against each other
 
     Plot p-values against each other, switch the axes by setting the `cols` parameter
@@ -353,22 +355,22 @@ def plot_pvalues(y_true,
     return fig
 
 
-def plot_calibration_clf(y_true,
-    p_values,
+def plot_calibration_clf(y_true: FloatListLike,
+    p_values: MatrixLike,
     labels = None,
-    ax = None,
-    figsize = (10,8),
-    chart_padding=0.025,
-    sign_vals=np.arange(0,1,0.01),
+    ax: Union[mpl.axes.Axes,None] = None,
+    figsize: tuple[float,float] = (10,8),
+    chart_padding: float = 0.025,
+    sign_vals: FloatListLike = np.arange(0,1,0.01),
     cm = None,
     overall_color = 'black',
-    flip_x = False,
-    flip_y = False,
-    plot_all_labels=True,
+    flip_x: bool = False,
+    flip_y: bool = False,
+    plot_all_labels: bool =True,
     title=None,
-    tight_layout=True,
-    plot_expected = True,
-    **kwargs):
+    tight_layout: bool = True,
+    plot_expected: bool = True,
+    **kwargs) -> mpl.figure.Figure:
     
     """**Classification** - Create a calibration plot
 
@@ -521,16 +523,16 @@ def plot_label_distribution(
         prop_multi = None,
         prop_empty = None,
         # Remaining parameters
-        ax=None,
-        figsize=(10,8),
+        ax: Union[mpl.axes.Axes,None] = None,
+        figsize: tuple[float,float] = (10,8),
         title=None,
         x_label = None,
         y_label = 'Label distribution',
-        cm=None,
-        display_incorrect=False,
-        mark_best=True,
-        tight_layout=True,
-        **kwargs):
+        cm = None,
+        display_incorrect: bool = False,
+        mark_best: bool = True,
+        tight_layout: bool = True,
+        **kwargs) -> mpl.figure.Figure:
     """**Classification** - Create a stacked plot with label ratios
 
     Note that there are *two ways* to call this function, either using already computed values which requires:
@@ -641,7 +643,7 @@ def _plot_label_distro_computed(
         cm=None,
         mark_best=True,
         tight_layout=True,
-        **kwargs):
+        **kwargs) -> mpl.figure.Figure:
     """**Classification** - Create a stacked plot with label ratios
     
     Parameters
@@ -752,16 +754,16 @@ def _plot_label_distro_raw(
         y_true,
         p_values,
         ax=None,
-        figsize=(10,8),
+        figsize: tuple[float,float] = (10,8),
         title=None,
         x_label = 'Significance',
         y_label = 'Label distribution',
-        sign_vals=np.arange(0,1,0.01),
+        sign_vals: FloatListLike = np.arange(0,1,0.01),
         cm=None,
-        display_incorrect=False,
-        mark_best=True,
-        tight_layout=True,
-        **kwargs):
+        display_incorrect: bool = False,
+        mark_best: bool = True,
+        tight_layout: bool = True,
+        **kwargs) -> mpl.figure.Figure:
     """**Classification** - Create a stacked plot with label ratios
     
     Parameters
@@ -926,7 +928,7 @@ def plot_confusion_matrix_bubbles(confusion_matrix,
     annotate_as_percentage = False,
     color_scheme = 'prediction_size',
     tight_layout = True,
-    **kwargs):
+    **kwargs) -> mpl.figure.Figure:
     """**Classification** - Create a Confusion matrix bubble plot 
 
     Render a confusion matrix with bubbles, the size of the bubbles are related to the frequency
@@ -1073,14 +1075,14 @@ def plot_confusion_matrix_bubbles(confusion_matrix,
     return fig
 
 
-def plot_confusion_matrix_heatmap(confusion_matrix, 
-    ax=None, 
-    figsize=(10,8), 
-    title=None,
-    cmap=None,
-    cbar_kws=None,
-    tight_layout=True,
-    **kwargs):
+def plot_confusion_matrix_heatmap(confusion_matrix : pd.DataFrame, 
+    ax: Union[mpl.axes.Axes,None] = None, 
+    figsize: tuple[float,float] = (10,8), 
+    title = None,
+    cmap = None,
+    cbar_kws = None,
+    tight_layout: bool = True,
+    **kwargs) -> mpl.figure.Figure:
     """**Classification** - Plots the Conformal Confusion Matrix in a Heatmap
     
     Note that this method requires the Seaborn to be available and will fail otherwise

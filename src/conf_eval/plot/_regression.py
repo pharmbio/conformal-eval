@@ -3,6 +3,7 @@
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
+from typing import Union, Any
 from sklearn.utils import check_consistent_length
 
 from conf_eval._utils import to_numpy1D, to_numpy2D, validate_sign
@@ -10,22 +11,23 @@ from conf_eval._utils import to_numpy1D, to_numpy2D, validate_sign
 # The following import sets seaborn etc if available 
 from ._utils import (get_fig_and_axis, _set_chart_size,
                      _plot_vline,_set_label_if_not_set,_set_title)
-from ._common import add_calib_curve
+from .._utils import FloatListLike, MatrixLike
+# from ._common import add_calib_curve
 
 
-def plot_pred_widths(sign_vals,
-                     pred_widths,
-                     pred_widths_sd = None,
+def plot_pred_widths(sign_vals: FloatListLike,
+                     pred_widths: FloatListLike,
+                     pred_widths_sd: Union[FloatListLike,None] = None,
                      color = 'blue',
-                     sd_alpha = 0.3,
-                     flip_x = False,
-                     ax = None,
-                     figsize = (10,8),
-                     chart_padding = 0.025,
-                     title = None,
-                     y_label = 'Median Prediction interval width',
-                     tight_layout = True,
-                     **kwargs):
+                     sd_alpha: float = 0.3,
+                     flip_x: bool = False,
+                     ax: Union[mpl.axes.Axes, None] = None,
+                     figsize: tuple[float,float] = (10,8),
+                     chart_padding: float = 0.025,
+                     title: Union[str,None] = None,
+                     y_label: Union[str,None] = 'Median Prediction interval width',
+                     tight_layout: bool = True,
+                     **kwargs: dict[str, Any]) -> mpl.figure.Figure:
     """**Regression** - Plot prediction widths at different significance levels
     
     Parameters
@@ -113,34 +115,34 @@ def plot_pred_widths(sign_vals,
 
 
 
-def plot_pred_intervals(y_true,
-    predictions,
-    ax = None,
-    figsize = (10,8),
-    chart_padding = 0.025,
+def plot_pred_intervals(y_true: FloatListLike,
+    predictions: MatrixLike,
+    ax: Union[mpl.axes.Axes, None] = None,
+    figsize: tuple[float,float] = (10,8),
+    chart_padding: float = 0.025,
 
     correct_color = 'blue',
     correct_marker = 'o',
-    correct_alpha = 0.75,
+    correct_alpha: float = 0.75,
     correct_ci = 'gray',
     correct_ci_alpha = 0.7,
-    correct_label = 'Correct',
+    correct_label: Union[str,None] = 'Correct',
 
     incorrect_color = 'red',
     incorrect_marker = 'o',
-    incorrect_alpha = 0.75,
+    incorrect_alpha:float = 0.75,
     incorrect_ci ='gray',
-    incorrect_ci_alpha = 0.7,
+    incorrect_ci_alpha: float = 0.7,
     incorrect_label = 'Incorrect',
 
     line_cap = 1,
     
-    title = None,
-    x_label = 'Predicted examples',
-    y_label = None,
+    title: Union[str,None] = None,
+    x_label: Union[str,None] = 'Predicted examples',
+    y_label: Union[str,None] = None,
     
-    x_start_index = 0,
-    tight_layout = True,
+    x_start_index: int = 0,
+    tight_layout: bool = True,
     **kwargs):
     """**Regression** - Plot predictions and their confidence intervals
 

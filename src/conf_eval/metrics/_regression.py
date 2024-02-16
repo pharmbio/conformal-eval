@@ -8,7 +8,6 @@ from typing import Union
 from .._utils import *
 
 RegressionPredictions = Union[np.ndarray,pd.DataFrame,list[list[list[float]]]]
-FloatListLike = Union[list[float],np.ndarray,pd.Series]
 
 def pred_width(predictions: RegressionPredictions, 
                median: bool = True) -> Union[float,np.ndarray]:

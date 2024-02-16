@@ -1,14 +1,15 @@
 from collections.abc import Iterable
 import matplotlib as mpl
 import numpy as np
+from typing import Union, Any
 from sklearn.utils import check_consistent_length
 from numpy.core.fromnumeric import sort
 from ._utils import get_fig_and_axis, cm_as_list, _set_title, _set_label_if_not_set,_set_chart_size
-from .._utils import to_numpy2D, validate_sign, to_numpy1D
+from .._utils import to_numpy2D, validate_sign, to_numpy1D, FloatListLike
 
 _default_color_map = list(mpl.rcParams['axes.prop_cycle'].by_key()['color'])
 
-def update_plot_settings(theme_style = 'ticks', context = 'notebook', font_scale = 1):
+def update_plot_settings(theme_style: str = 'ticks', context: str = 'notebook', font_scale: float = 1):
     '''
     Update the global plot-settings, requires having seaborn available.
 
@@ -23,18 +24,18 @@ def update_plot_settings(theme_style = 'ticks', context = 'notebook', font_scale
     except ImportError as e:
         pass
 
-def add_calib_curve(ax, 
-    sign_vals,
-    error_rates,
-    label = None,
+def add_calib_curve(ax: mpl.axes.Axes, 
+    sign_vals: FloatListLike,
+    error_rates: FloatListLike,
+    label: Union[str,None] = None,
     color = 'k',
-    flip_x = False,
-    flip_y = False,
-    chart_padding = 0.025,
-    set_chart_size = False,
-    plot_expected = True,
-    zorder = None,
-    **kwargs):
+    flip_x: bool = False,
+    flip_y: bool = False,
+    chart_padding: float = 0.025,
+    set_chart_size: bool = False,
+    plot_expected: bool = True,
+    zorder: int = None,
+    **kwargs: dict[str, Any]) -> mpl.figure.Figure:
     """Utility function for adding a single line to an Axes
 
     Solves setting chart size, error rate vs significance or Accuracy vs confidence
@@ -114,24 +115,24 @@ def add_calib_curve(ax,
 
     return (x_label,y_label)
 
-def plot_calibration(sign_vals = None, 
-    error_rates = None, 
-    error_rates_sd = None, 
-    conf_vals = None,
-    accuracy_vals = None,
-    accuracy_sd = None,
-    labels = None,
-    ax = None, 
-    figsize = (10,8),
-    chart_padding=0.025,
+def plot_calibration(sign_vals: FloatListLike = None, 
+    error_rates: FloatListLike = None, 
+    error_rates_sd: FloatListLike = None, 
+    conf_vals: FloatListLike = None,
+    accuracy_vals: FloatListLike = None,
+    accuracy_sd: FloatListLike = None,
+    labels: Union[list[str],None] = None,
+    ax: Union[mpl.axes.Axes, None] = None, 
+    figsize: tuple[float,float] = (10,8),
+    chart_padding: float = 0.025,
     cm = None,
-    flip_x = False,
-    flip_y = False,
-    title=None,
-    tight_layout=True,
-    plot_expected = True,
-    sd_alpha = .3,
-    **kwargs):
+    flip_x: bool = False,
+    flip_y: bool = False,
+    title: Union[str,None] = None,
+    tight_layout: bool = True,
+    plot_expected: bool = True,
+    sd_alpha: float = .3,
+    **kwargs: dict[str, Any]) -> mpl.figure.Figure:
     '''
     **Classification and regression ** - Create a calibration plot from computed values
 
