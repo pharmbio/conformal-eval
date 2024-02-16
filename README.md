@@ -2,7 +2,7 @@
 A Python library for simplifying the evaluation of conformal predictors. 
 
 ## Installation
-Installation of conformal-eval is made by;
+Installation of Conformal-eval is made by;
 ```bash
 pip install conformal-eval
 ```
@@ -18,7 +18,7 @@ pip install "conformal-eval[report]"
 Examples of using the package can be seen in our examples notebooks: 
 - [Conformal Classification](examples/User_guide_classification.ipynb)
 - [Conformal Regression](examples/User_guide_regression.ipynb)
-- [Using Nonconformist and conf-eval](examples/Nonconformist_and_plot_utils.ipynb)
+- [Using Nonconformist and conf-eval](examples/Nonconformist_and_conformal-eval.ipynb)
 
 ## Package dependencies
 Package dependencies can be found in the [pyproject.toml](pyproject.toml) under `[tool.poetry.dependencies]`, noting that the `Jinja2` package is only required for for the `report` extras (installing `conformal-eval[report]`).
