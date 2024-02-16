@@ -1,12 +1,16 @@
-name: Publish conformal-eval to TestPyPI
+name: Publish conformal-eval to PyPI
 
 on:
-  # Only run when manually started
+  push:
+    tags:
+      - '*'
   workflow_dispatch:
 
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
+    # Check if a new tag or if manual push, otherwise skip
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
     steps:
     - uses: actions/checkout@v2
 
@@ -26,9 +30,6 @@ jobs:
     - name: Build (for verification)
       run: poetry build
 
-      # Skip for now
-#    - name: Run tests
-#      run: poetry run pytest
-    - name: Publish to TestPyPI
-      run: poetry config repositories.testpypi https://test.pypi.org/legacy/ && poetry publish -r testpypi -u __token__ -p ${{ secrets.TEST_PYPI_API_TOKEN }}
+    - name: Publish to PyPI
+      run: poetry publish -u __token__ -p ${{ secrets.PYPI_API_TOKEN }}
 
