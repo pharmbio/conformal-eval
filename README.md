@@ -89,6 +89,8 @@ Add/finish the following plots:
 
 
 ### Change log:
+- **1.0.0b2**:
+    * Added the png-logo files for the `cpsign-report` utility (gitignore had removed them before). 
 - **1.0.0b1**:
     * Forked the [plot_utils](https://github.com/pharmbio/plot_utils) library to make an extensive refactor of module names.
     * Added `conf_eval.cpsign.report` module for generating model-reports in HTML format. The extras `report` is needed to run this code.
