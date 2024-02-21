@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <title>{% if title %}{{ title }}{% else %}Model report{% endif %}</title>
-        <link rel="stylesheet" href="static/style.css">
+        <link rel="stylesheet" href="{{ static_dir }}/style.css">
     </head>
     <body>
         <h1>{%if heading %}{{ heading }} {% else %}Model report{% endif %}</h1>
@@ -49,11 +49,11 @@
             <div class="container">
 
                 <div class="pharmbio">
-                    <a href="https://pharmb.io/"><img src="static/pharmbio-logo-new.png" alt="Pharmbio logo"></a>
+                    <a href="https://pharmb.io/"><img src="{{ static_dir }}/pharmbio-logo-new.png" alt="Pharmbio logo"></a>
                 </div>
 
                 <div class="arosbio">
-                    <a href="https://arosbio.com"><img src="static/arosbio-logo.png" alt="Aros Bio"></a> 
+                    <a href="https://arosbio.com"><img src="{{ static_dir }}/arosbio-logo.png" alt="Aros Bio"></a> 
                 </div>
 
             </div>

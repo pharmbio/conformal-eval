@@ -14,7 +14,7 @@ except ImportError:
 
 
 _static_sub_dir_name = "_static"
-_static_output_dir_name = "static"
+_static_output_dir_name = "_static"
 
 _default_page_name = "model-report.html"
 _package_dir = Path(__file__).absolute().parent
@@ -70,7 +70,8 @@ def generate_html(model_file: Union[str, Path],
         'pt_type' : __get_pt_type(param_section['predictor']['mlPredictorType']),
         'n_observations': param_section['data']['nrObservations'],
         'n_features': param_section['data']['nrFeatures'],
-        'if_clf': __get_clf_extra_info(param_section['data'])
+        'if_clf': __get_clf_extra_info(param_section['data']),
+        'static_dir': _static_output_dir_name
     }
     # Add hyper-parameter table
     ml_settings_matrix = []
@@ -279,7 +280,8 @@ def __generate_cp_validation_section(validation_file, validation_template, stati
     val_html = validation_template.render({'calib_src' : _static_output_dir_name+'/calibration_fig.svg',
                                            'eff_src' : _static_output_dir_name+'/efficiency_fig.svg',
                                            'eff_caption' : eff_caption,
-                                           'metric_table' : metric_table})
+                                           'metric_table' : metric_table,
+                                           'static_dir': _static_output_dir_name})
     
     return val_html
     
