@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "conformal-eval"
-version = "1.0.0b2"
+version = "1.0.0b3"
 description = "A package with utility functions for evaluating conformal predictors"
 authors = ["Staffan Arvidsson McShane <staffan.arvidsson@gmail.com>"]
 license = "MIT"

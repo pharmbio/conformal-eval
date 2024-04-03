@@ -89,6 +89,9 @@ Add/finish the following plots:
 
 
 ### Change log:
+- **1.0.0b3**:
+    * Allow to configure the 'static' output directory, to e.g. avoid path clashes with other files. 
+    * Change links in README to absolute urls to github, so they work at PyPI when deployed.
 - **1.0.0b2**:
     * Added the png-logo files for the `cpsign-report` utility (gitignore had removed them before). 
 - **1.0.0b1**:
